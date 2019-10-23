@@ -14,6 +14,8 @@ def main():
     run = True
     clock = pygame.time.Clock()
     r = room(CELL_SIZE, rows, cols, window)
+    r.draw_grid()
+    r.draw_borders()
     while run:
         pygame.time.delay(50)
         clock.tick(10)
@@ -21,9 +23,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        r.draw_grid()
-        r.draw_borders()
+        # r.draw_grid()
+        # r.draw_borders()
         pygame.display.update()
+        # pygame.display.flip()
 
     pygame.quit()
 

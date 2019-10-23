@@ -1,4 +1,5 @@
 import pygame
+import random
 from tile import tile
 class room:
     def __init__(self, cell_size, rows, cols, window):
@@ -38,7 +39,27 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
     def draw_borders(self):
-        pass
+        number = random.randint(0, min(self.rows, self.cols)-1)
+        for i in range(number):
+            x = random.randint(0, self.cols-1)
+            y = random.randint(0, self.rows-1)
+            dir = random.randint(0,3)
+
+            if(dir == 0):  # up border
+                self.grid[y][x].set_up_border()
+                pygame.draw.line(self.window, (255,0,0), (x*self.cell_size,y*self.cell_size),((x+1)*self.cell_size, y*self.cell_size))
+            elif(dir == 1):  # down border
+                self.grid[y][x].set_down_border()
+                pygame.draw.line(self.window, (255,0,0),(x*self.cell_size,(y+1)*self.cell_size), ((x+1)*self.cell_size,(y+1)*self.cell_size))
+            elif(dir == 2):  # left border
+                self.grid[y][x].set_left_border()
+                pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
+            elif(dir == 3):  # right border
+                self.grid[y][x].set_right_border()
+                pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
+            else:
+                pass
+
 
     def get_array(self):
         return self.grid
