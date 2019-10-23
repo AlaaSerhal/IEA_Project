@@ -14,11 +14,12 @@ for row in range(g):
     for column in range(g):
         grid[row].append(0)
 pygame.init()
-WINDOW_SIZE = [round(g*71.42), round(g*71.42)]
+WINDOW_SIZE = [int(round(g*71.42)), int(round(g*71.42))]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Vaccum Cleaner Agent")
 done = False
 clock = pygame.time.Clock()
+
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
