@@ -7,6 +7,7 @@ class room:
         self.rows = rows
         self.cols = cols
         self.window = window
+        self.vacuum = [rows//2, cols//2]
         self.grid = []
         for row in range(rows):
             self.grid.append([])
@@ -20,6 +21,7 @@ class room:
                     self.grid[row][col].set_down_border()
                 if(col == cols-1):
                     self.grid[row][col].set_right_border()
+        self.grid[self.vacuum[0], self.vacuum[1]].set_vacuum()
 
     def draw_grid(self):
         x = 0
@@ -60,6 +62,19 @@ class room:
             else:
                 pass
 
+    def get_window(self):
+        return self.window
+
+    def get_cell_size(self):
+        return self.cell_size
 
     def get_array(self):
         return self.grid
+
+    def vacuum_position(self):
+        return self.vacuum
+
+    def set_vacuum(self, row, col):
+        self.grid[self.vacuum[0], self.vacuum[1]].remove_vacuum()
+        self.vacuum = [row, col]
+        self.grid[self.vacuum[0], self.vacuum[1]].set_vacuum()

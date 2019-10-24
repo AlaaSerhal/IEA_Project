@@ -1,10 +1,34 @@
+import pygame
+from room import room
+
 class vacuum:
-    def __init__(self, x_pos, y_pos):
-        self.x_pos = x_pos
-        self.y_pos = y_pos
+    def __init__(self, room):
+        self.img = pygame.image.load("vacuum.png")
+        self.room = room
 
-    def get_x_pos(self):
-        return self.x_pos
+    def get_position(self):
+        return self.room.vacuum_position()
 
-    def get_y_pos(self):
-        return self.y_pos
+    def set_position(self, row, col):
+        old = get_position()
+        window = self.room.get_window()
+        cell_size = self.room.get_cell_size()
+        self.room.set_vacuum(row, col)
+        pygame.draw.rect(window, (0,0,0),((col*cell_size)+1, (row*cell_size)+1, cell_size-2, cell_size-2)
+        pygame.blit(self.img, (((col*cell_size)+2), ((row*cell_size)+2))
+        pygame.display.update()
+
+    def move_up(self):
+        pass
+
+    def move_down(self):
+        pass
+
+    def move_right(self):
+        pass
+
+    def move_left(self):
+        pass
+
+    def clean(self):
+        pass

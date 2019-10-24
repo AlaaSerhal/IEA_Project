@@ -15,8 +15,11 @@ class tile:
     def set_y_pos(self,y_pos):
         self.y_pos = y_pos
 
-    def set_vacuum(self, vacuum):
-        self.vacuum = vacuum
+    def set_vacuum(self):
+        self.vacuum = True
+
+    def remove_vacuum(self):
+        self.vacuum = False
 
     def set_borders(self, up, down, left, right):
         self.left_border = left
