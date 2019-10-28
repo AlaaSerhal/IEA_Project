@@ -21,7 +21,7 @@ class vacuum:
         position = self.room.vacuum_position()
         row = position[0]
         col = position[1]
-        if(!grid[row][col].has_up_border() and row > 0):
+        if(not grid[row][col].has_up_border() and row > 0):
             set_position(row-1, col)
         else:
             raise Exception("Invalid move! Cannot move up from current position.")
@@ -31,7 +31,7 @@ class vacuum:
         position = self.room.vacuum_position()
         row = position[0]
         col = position[1]
-        if(!grid[row][col].has_down_border() and row < self.room.get_rows()-1):
+        if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
             set_position(row+1, col)
         else:
             raise Exception("Invalid move! Cannot move down from current position.")
@@ -41,7 +41,7 @@ class vacuum:
         position = self.room.vacuum_position()
         row = position[0]
         col = position[1]
-        if(!grid[row][col].has_right_border() and col < self.room.get_cols()-1):
+        if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
             set_position(row, col+1)
         else:
             raise Exception("Invalid move! Cannot move right from current position.")
@@ -51,7 +51,7 @@ class vacuum:
         position = self.room.vacuum_position()
         row = position[0]
         col = position[1]
-        if(!grid[row][col].has_left_border() and col > 0):
+        if(not grid[row][col].has_left_border() and col > 0):
             set_position(row, col-1)
         else:
             raise Exception("Invalid move! Cannot move up from current position.")
