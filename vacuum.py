@@ -1,16 +1,14 @@
 import pygame
 from room import room
+from tile import tile
 
 class vacuum:
     def __init__(self, room):
         self.img = pygame.image.load("vacuum.png")
         self.room = room
 
-    def get_position(self):
-        return self.room.vacuum_position()
-
     def set_position(self, row, col):
-        old = get_position()
+        old = self.room.vacuum_position()
         window = self.room.get_window()
         cell_size = self.room.get_cell_size()
         self.room.set_vacuum(row, col)
@@ -19,16 +17,52 @@ class vacuum:
         pygame.display.update()
 
     def move_up(self):
-        pass
+        grid = self.room.get_array()
+        position = self.room.vacuum_position()
+        row = position[0]
+        col = position[1]
+        if(!grid[row][col].has_up_border() and row > 0):
+            set_position(row-1, col)
+        else:
+            raise Exception("Invalid move! Cannot move up from current position.")
 
     def move_down(self):
-        pass
+        grid = self.room.get_array()
+        position = self.room.vacuum_position()
+        row = position[0]
+        col = position[1]
+        if(!grid[row][col].has_down_border() and row < self.room.get_rows()-1):
+            set_position(row+1, col)
+        else:
+            raise Exception("Invalid move! Cannot move down from current position.")
 
     def move_right(self):
-        pass
+        grid = self.room.get_array()
+        position = self.room.vacuum_position()
+        row = position[0]
+        col = position[1]
+        if(!grid[row][col].has_right_border() and col < self.room.get_cols()-1):
+            set_position(row, col+1)
+        else:
+            raise Exception("Invalid move! Cannot move right from current position.")
 
     def move_left(self):
-        pass
+        grid = self.room.get_array()
+        position = self.room.vacuum_position()
+        row = position[0]
+        col = position[1]
+        if(!grid[row][col].has_left_border() and col > 0):
+            set_position(row, col-1)
+        else:
+            raise Exception("Invalid move! Cannot move up from current position.")
 
     def clean(self):
-        pass
+        grid = self.room.get_array()
+        position = self.room.vacuum_position()
+        row = position[0]
+        col = position[1]
+        if(grid[row][col].has_dirt()):
+            self.room.clean_tile(row, col)
+            set_position(row, col)
+        else:
+            pass

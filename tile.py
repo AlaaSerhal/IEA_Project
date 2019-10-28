@@ -73,5 +73,17 @@ class tile:
     def get_y_pos(self):
         return self.y_pos
 
+    def has_up_border(self):
+        return self.up_border
+
+    def has_down_border(self):
+        return self.down_border
+
+    def has_left_border(self):
+        return self.left_border
+
+    def has_right_border(self):
+        return self.right_border
+
     def get_vacuum(self):
         return self.vacuum

@@ -68,11 +68,20 @@ class room:
     def get_cell_size(self):
         return self.cell_size
 
+    def get_rows(self):
+        return self.rows
+
+    def get_cols(self):
+        return self.cols
+
     def get_array(self):
         return self.grid
 
     def vacuum_position(self):
         return self.vacuum
+
+    def clean_tile(self, row, col):
+        self.grid[row][col].clean()
 
     def set_vacuum(self, row, col):
         self.grid[self.vacuum[0], self.vacuum[1]].remove_vacuum()
