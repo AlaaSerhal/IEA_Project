@@ -1,6 +1,7 @@
 import pygame
 import random
 from tile import tile
+
 class room:
     def __init__(self, cell_size, rows, cols, window):
         self.cell_size = cell_size
@@ -21,7 +22,7 @@ class room:
                     self.grid[row][col].set_down_border()
                 if(col == cols-1):
                     self.grid[row][col].set_right_border()
-        self.grid[self.vacuum[0], self.vacuum[1]].set_vacuum()
+        self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
 
     def draw_grid(self):
         x = 0
@@ -84,6 +85,6 @@ class room:
         self.grid[row][col].clean()
 
     def set_vacuum(self, row, col):
-        self.grid[self.vacuum[0], self.vacuum[1]].remove_vacuum()
+        self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
         self.vacuum = [row, col]
-        self.grid[self.vacuum[0], self.vacuum[1]].set_vacuum()
+        self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
