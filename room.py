@@ -43,27 +43,42 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
     def draw_borders(self):
-        number = random.randint(0, min(self.rows, self.cols)-1)
-        for i in range(number):
-            x = random.randint(0, self.cols-1)
-            y = random.randint(0, self.rows-1)
-            dir = random.randint(0,3)
-
-            if(dir == 0):  # up border
-                self.grid[y][x].set_up_border()
-                pygame.draw.line(self.window, (255,0,0), (x*self.cell_size,y*self.cell_size),((x+1)*self.cell_size, y*self.cell_size))
-            elif(dir == 1):  # down border
-                self.grid[y][x].set_down_border()
-                pygame.draw.line(self.window, (255,0,0),(x*self.cell_size,(y+1)*self.cell_size), ((x+1)*self.cell_size,(y+1)*self.cell_size))
-            elif(dir == 2):  # left border
-                self.grid[y][x].set_left_border()
-                pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
-            elif(dir == 3):  # right border
-                self.grid[y][x].set_right_border()
-                pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
-            else:
-                pass
-
+            number = random.randint(0, min(self.rows, self.cols)-1)
+            for i in range(number):
+                x = random.randint(0, self.cols-1)
+                y = random.randint(0, self.rows-1)
+                dir = random.randint(0,3)
+    
+                if(dir == 0):  # up border
+                    self.grid[y][x].set_up_border()
+                    
+                    if(y-1 >= 0):
+                        self.grid[y-1][x].set_down_border()
+                    
+                    pygame.draw.line(self.window, (255,0,0), (x*self.cell_size,y*self.cell_size),((x+1)*self.cell_size, y*self.cell_size))
+                elif(dir == 1):  # down border
+                    self.grid[y][x].set_down_border()
+                    
+                    if(y+1 < self.rows):
+                        self.grid[y+1][x].set_up_border()                
+                    
+                    pygame.draw.line(self.window, (255,0,0),(x*self.cell_size,(y+1)*self.cell_size), ((x+1)*self.cell_size,(y+1)*self.cell_size))
+                elif(dir == 2):  # left border
+                    self.grid[y][x].set_left_border()
+                    
+                    if(x-1 >= 0):
+                        self.grid[y][x-1].set_right_border()                
+                    
+                    pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
+                elif(dir == 3):  # right border
+                    self.grid[y][x].set_right_border()
+                    
+                    if(x+1 < self.cols):
+                        self.grid[y][x+1].set_left_border()                
+                    
+                    pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
+                else:
+                    pass
 
     def set_dirt(self, row, col):
         self.grid[row][col].dirty()
@@ -99,46 +114,3 @@ class room:
         self.vacuum = [row, col]
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
 
-
-    #     #UNDER CONSTRUCTION
-    # def add_nodes(self):
-    #
-    #     grid2 = []
-    #
-    #     for y in range(0,self.rows):
-    #
-    #         grid2.append([])
-    #
-    #         for x in range(0,self.cols):
-    #
-    #             grid2[y].append(None)
-    #
-    #
-    #             #if(x == 0 and y == 0):
-    #             #    grid2[y][x] = self.grid[x][y]
-    #             #    continue
-    #
-    #             #path path path
-    #             if( not self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
-    #                 #if has bottom or top path add node
-    #                 if(self.grid[x][y].has_down_border() or self.grid[x][y].has_up_border() ):
-    #                     grid2[y][x] = self.grid[x][y]
-    #
-    #             #path path wall
-    #             if( not self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
-    #                 grid2[y][x] = self.grid[x][y]
-    #
-    #             #wall path wall
-    #             if(  self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
-    #                 grid2[y][x] = self.grid[x][y]
-    #
-    #             #wall path path
-    #             if(  self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
-    #                 grid2[y][x] = self.grid[x][y<D
-    #                # print( str(x) + ' ' + str(y))
-    #                #  print(grid2[y][x] is Non=  06
-    #
-    #     # for x in range(0,self.cols):
-    #     #     for y in range(0,self.rows):
-    #     #         # print( str(x) + ' ' + str(y))
-    #     #         # print(grid2[y][x] issrr106
