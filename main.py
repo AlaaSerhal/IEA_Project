@@ -23,6 +23,9 @@ def main():
     r = room(CELL_SIZE, rows, cols, window)
     r.draw_grid()
     r.draw_borders()
+    
+    r.add_nodes()
+    
     v = vacuum(r, window)
     # window.blit(vacuum_img, (50,50))
     # window.blit(dirt_img, (200,200))
