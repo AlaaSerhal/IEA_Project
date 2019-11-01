@@ -84,3 +84,6 @@ class tile:
 
     def get_vacuum(self):
         return self.vacuum
+
+    def get_string_id(self):
+        return "y" + str(self.x_pos) + "x" + str(self.y_pos)
