@@ -25,7 +25,7 @@ def main():
     r.draw_grid()
     r.draw_borders()
 
-    r.add_nodes()
+    # r.add_nodes()
 
     v = vacuum(r, window)
     d = dirt(r, window, 4)

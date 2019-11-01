@@ -59,8 +59,8 @@ class room:
                 self.grid[y][x].set_left_border()
                 pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
             elif(dir == 3):  # right border
-                self.grid[y][x].set_rigft_border(
-          pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
+                self.grid[y][x].set_right_border()
+                pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
             else:
                 pass
 
@@ -100,45 +100,45 @@ class room:
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
 
 
-        #UNDER CONSTRUCTION
-    def add_nodes(self):
-
-        grid2 = []
-
-        for y in range(0,self.rows):
-
-            grid2.append([])
-
-            for x in range(0,self.cols):
-
-                grid2[y].append(None)
-
-
-                #if(x == 0 and y == 0):
-                #    grid2[y][x] = self.grid[x][y]
-                #    continue
-
-                #path path path
-                if( not self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
-                    #if has bottom or top path add node
-                    if(self.grid[x][y].has_down_border() or self.grid[x][y].has_up_border() ):
-                        grid2[y][x] = self.grid[x][y]
-
-                #path path wall
-                if( not self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
-                    grid2[y][x] = self.grid[x][y]
-
-                #wall path wall
-                if(  self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
-                    grid2[y][x] = self.grid[x][y]
-
-                #wall path path
-                if(  self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
-                    grid2[y][x] = self.grid[x][y<D
-                   print( str(x) + ' ' + str(y))
-                    print(grid2[y][x] is Non=  06
-
-        for x in range(0,self.cols):
-            for y in range(0,self.rows):
-                print( str(x) + ' ' + str(y))
-                print(grid2[y][x] issrr106
+    #     #UNDER CONSTRUCTION
+    # def add_nodes(self):
+    #
+    #     grid2 = []
+    #
+    #     for y in range(0,self.rows):
+    #
+    #         grid2.append([])
+    #
+    #         for x in range(0,self.cols):
+    #
+    #             grid2[y].append(None)
+    #
+    #
+    #             #if(x == 0 and y == 0):
+    #             #    grid2[y][x] = self.grid[x][y]
+    #             #    continue
+    #
+    #             #path path path
+    #             if( not self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
+    #                 #if has bottom or top path add node
+    #                 if(self.grid[x][y].has_down_border() or self.grid[x][y].has_up_border() ):
+    #                     grid2[y][x] = self.grid[x][y]
+    #
+    #             #path path wall
+    #             if( not self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
+    #                 grid2[y][x] = self.grid[x][y]
+    #
+    #             #wall path wall
+    #             if(  self.grid[x][y].has_left_border() and self.grid[x][y].has_right_border() ):
+    #                 grid2[y][x] = self.grid[x][y]
+    #
+    #             #wall path path
+    #             if(  self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
+    #                 grid2[y][x] = self.grid[x][y<D
+    #                # print( str(x) + ' ' + str(y))
+    #                #  print(grid2[y][x] is Non=  06
+    #
+    #     # for x in range(0,self.cols):
+    #     #     for y in range(0,self.rows):
+    #     #         # print( str(x) + ' ' + str(y))
+    #     #         # print(grid2[y][x] issrr106
