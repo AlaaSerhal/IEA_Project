@@ -32,7 +32,7 @@ class tile:
         self.up_border = True
 
     def set_down_border(self):
-        self.dowm_border = True
+        self.down_border = True
 
     def set_left_border(self):
         self.left_border = True
