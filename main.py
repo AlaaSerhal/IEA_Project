@@ -1,6 +1,7 @@
 import pygame
 from vacuum import vacuum
 from room import room
+from dirt import dirt
 
 
 def main():
@@ -23,14 +24,16 @@ def main():
     r = room(CELL_SIZE, rows, cols, window)
     r.draw_grid()
     r.draw_borders()
-    
+
     r.add_nodes()
-    
+
     v = vacuum(r, window)
+    d = dirt(r, window, 4)
     # window.blit(vacuum_img, (50,50))
     # window.blit(dirt_img, (200,200))
     path = ["D", "L", "U", "R"]
     while run:
+        d.rnd_dirt(1)
         pygame.time.delay(50)
         clock.tick(10)
         for event in pygame.event.get():

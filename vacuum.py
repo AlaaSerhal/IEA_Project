@@ -15,8 +15,10 @@ class vacuum:
         left = int((col*cell_size)+2)
         top = int((row*cell_size)+2)
         pygame.draw.rect(self.window, (0,0,0),((old_col*cell_size)+1, (old_row*cell_size)+1, cell_size-2, cell_size-2), False)
+        if(self.room.get_array()[row][col].has_dirt()):
+            self.room.clean_tile(row, col)
+            pygame.draw.rect(self.window, (0,0,0),((old_col*cell_size)+1, (old_row*cell_size)+1, cell_size-2, cell_size-2), False)
         self.window.blit(self.img, (left, top))
-        print(self.room.vacuum_position())
         pygame.display.update()
 
     def move_up(self):
@@ -58,14 +60,3 @@ class vacuum:
             self.set_position(row, col-1)
         else:
             raise Exception("Invalid move! Cannot move up from current position.")
-
-    def clean(self):
-        grid = self.room.get_array()
-        position = self.room.vacuum_position()
-        row = position[0]
-        col = position[1]
-        if(grid[row][col].has_dirt()):
-            self.room.clean_tile(row, col)
-            self.set_position(row, col)
-        else:
-            pass

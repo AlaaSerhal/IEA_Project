@@ -19,7 +19,7 @@ class tile:
         self.vacuum = True
 
     def remove_vacuum(self):
-        self.vacuum = False
+        self.vacuum = None
 
     def set_borders(self, up, down, left, right):
         self.left_border = left
@@ -40,9 +40,6 @@ class tile:
     def set_right_border(self):
         self.right_border = True
 
-    def release_vacuum(self):
-        self.vacuum = None
-
     def dirty(self):
         self.dirt = True
 
@@ -56,7 +53,7 @@ class tile:
             raise Exception("Cannot clean without vacuum")
 
     def has_dirt(self):
-        return self.has_dirt
+        return self.dirt
 
     def has_vacuum(self):
         if self.vacuum is None:
