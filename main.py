@@ -1,15 +1,32 @@
 import pygame
 from vacuum import vacuum
+import PySimpleGUI as sg
 from room import room
 from dirt import dirt
 
 
 def main():
     rows, cols = 15, 15
-    while(rows >= 15 or cols >= 15 or rows == 0 or cols == 0):
-        rows = int(input("please enter number of rows as an integer: "))
-        cols = int(input("please enter number of columns as an integer: "))
-    print("borders will be randomly placed")
+    while(rows >= 15 or cols >= 15 or rows==0 or cols==0):
+        try:
+            layout = [  [sg.Text('Necessary Inputs')],
+            [sg.Text('Please enter number of rows as an integer:'), sg.InputText()],
+            [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
+            [sg.Submit(), sg.Cancel()]]
+            window = sg.Window('Vacuum Cleaner Agent', layout)
+            event, values = window.Read()
+            rows=int(values[0])
+            cols=int(values[1])
+            if event in (None, 'Cancel'):
+                print('Canceled')
+                exit()
+            if event in ('Submit'):
+                print('Borders are placed randomly')
+
+
+            window.Close()
+        except ValueError:
+            print("No valid integer! Please try again ...")
     CELL_SIZE = 40
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
 
