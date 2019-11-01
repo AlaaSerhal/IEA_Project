@@ -2,6 +2,12 @@ import pygame
 import random
 from tile import tile
 
+from dij import Graph
+from dij import dijkstra
+from dij import shortest
+
+
+
 class room:
     def __init__(self, cell_size, rows, cols, window):
         self.cell_size = cell_size
@@ -50,15 +56,31 @@ class room:
 
             if(dir == 0):  # up border
                 self.grid[y][x].set_up_border()
+                
+                if(y-1 >= 0):
+                    self.grid[y-1][x].set_down_border()
+                
                 pygame.draw.line(self.window, (255,0,0), (x*self.cell_size,y*self.cell_size),((x+1)*self.cell_size, y*self.cell_size))
             elif(dir == 1):  # down border
                 self.grid[y][x].set_down_border()
+                
+                if(y+1 < self.rows):
+                    self.grid[y+1][x].set_up_border()                
+                
                 pygame.draw.line(self.window, (255,0,0),(x*self.cell_size,(y+1)*self.cell_size), ((x+1)*self.cell_size,(y+1)*self.cell_size))
             elif(dir == 2):  # left border
                 self.grid[y][x].set_left_border()
+                
+                if(x-1 >= 0):
+                    self.grid[y][x-1].set_right_border()                
+                
                 pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
             elif(dir == 3):  # right border
                 self.grid[y][x].set_right_border()
+                
+                if(x+1 < self.cols):
+                    self.grid[y][x+1].set_left_border()                
+                
                 pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
             else:
                 pass
@@ -125,8 +147,7 @@ class room:
                 #wall path path
                 if(  self.grid[x][y].has_left_border() and not self.grid[x][y].has_right_border() ):
                     grid2[y][x] = self.grid[x][y]
-                    print( str(x) + ' ' + str(y))
-                    print(grid2[y][x] is None)
+                    
                     
                     
          
@@ -135,3 +156,49 @@ class room:
             for y in range(0,self.rows): 
                 print( str(x) + ' ' + str(y))
                 print(grid2[y][x] is None)
+    
+    
+    def transformGridToGraph(self):
+
+        g = Graph()
+        
+        print(self.rows)
+            
+        for row in range(0,self.rows):
+            for col in range(0,self.cols):  
+                g.add_vertex(self.grid[row][col].get_string_id())
+                
+        for y in range(0,self.rows):
+            for x in range(0,self.cols):  
+                
+                if(not self.grid[y][x].has_up_border() ):
+                    g.add_edge(self.grid[y][x].get_string_id(), self.grid[y-1][x].get_string_id(), 1)     
+        
+                if(not self.grid[y][x].has_down_border()):
+                    g.add_edge(self.grid[y][x].get_string_id(), self.grid[y+1][x].get_string_id(), 1)     
+                    
+                if(not self.grid[y][x].has_left_border() ):
+                    g.add_edge(self.grid[y][x].get_string_id(), self.grid[y][x-1].get_string_id(), 1)     
+                
+                if(not self.grid[y][x].has_right_border()  ):
+                    g.add_edge(self.grid[y][x].get_string_id(), self.grid[y][x+1].get_string_id(), 1)     
+ 
+    
+        #print ('Graph data:')
+        #for v in g:
+        #    for w in v.get_connections():
+        #        vid = v.get_id()
+        #        wid = w.get_id()
+        #        print ('( %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
+    
+    
+    def getRawPath(self):
+
+        dijkstra(g, g.get_vertex(self.grid[0][0].get_string_id()), g.get_vertex(self.grid[4][4].get_string_id())) 
+    
+        target = g.get_vertex(self.grid[4][4].get_string_id())
+        path = [target.get_id()]
+        shortest(target, path)
+        print ('The shortest path : %s', (path[::-1]))     
+        
+        
