@@ -17,13 +17,11 @@ def main():
             event, values = window.Read()
             rows=int(values[0])
             cols=int(values[1])
-            if event in (None, 'Cancel'):
-                print('Canceled')
-                exit()
+
             if event in ('Submit'):
                 print('Borders are placed randomly')
-
-
+            if event in ('Cancel'):
+                exit()
             window.Close()
         except ValueError:
             print("No valid integer! Please try again ...")
