@@ -12,22 +12,28 @@ def main():
             layout = [  [sg.Text('Necessary Inputs')],
             [sg.Text('Please enter number of rows as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
-            [sg.Submit(), sg.Cancel()]]
+            [sg.Frame(layout=[
+            [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
+            [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
+            [sg.Radio('Case3 (Fully observable borders and unknown dirt positions):', "Case1", default=False)],
+            [sg.Radio('Case4 (Unknown borders and dirt positions):', "Case1", default=False)]],
+            title='Choose Any of these Cases',title_color='red', relief=sg.RELIEF_SUNKEN, tooltip='Use these to set flags')],
+            [sg.Submit()]]
             window = sg.Window('Vacuum Cleaner Agent', layout)
             event, values = window.Read()
+            case1=values[2]
+            case2=values[3]
+            case3=values[4]
+            case4=values[5]
             rows=int(values[0])
             cols=int(values[1])
-
             if event in ('Submit'):
                 print('Borders are placed randomly')
-            if event in ('Cancel'):
-                exit()
             window.Close()
         except ValueError:
             print("No valid integer! Please try again ...")
     CELL_SIZE = 40
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
-
     pygame.init()
 
     # dirt_img = pygame.image.load("dirt.png")
