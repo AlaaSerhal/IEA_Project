@@ -5,6 +5,10 @@ from room import room
 from dirt import dirt
 
 
+from solver import solver
+import copy
+
+
 def main():
     rows, cols = 15, 15
     while(rows >= 15 or cols >= 15 or rows==0 or cols==0):
@@ -52,6 +56,11 @@ def main():
     d = dirt(r, window, 4)
     # window.blit(vacuum_img, (50,50))
     # window.blit(dirt_img, (200,200))
+
+    pos = None
+    mySolver = solver(r.get_array())        
+
+
     path = ["D", "L", "U", "R"]
     while run:
         d.rnd_dirt(1)
@@ -60,6 +69,32 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+        
+        #EXPLORE MAP CODE
+        #CASE 4
+        if(pos is None):
+            pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
+            print('target pos: ' + str(pos) )
+        
+        if (not pos[0] == -1):
+    
+            path = mySolver.getLastActualUsedPath()
+            
+            print('path: ' + str(path) )
+            
+            print(r.vacuum_position() )
+            
+            pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
+            
+            print('target pos: ' + str(pos) )
+            
+            #pygame.display.update()
+            
+        else:
+            path = []
+
+        #END OF EXPLORATION
+
         for p in path:
             if(p == "L"):
                 v.move_left()
