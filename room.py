@@ -43,40 +43,46 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
     def draw_borders(self):
-            number = random.randint(0, min(self.rows, self.cols)-1 + 5)
-            for i in range(number):
+            number = random.randint(0, min(self.rows, self.cols)-1)
+            print("number of borders: ", number)
+            i = 0
+            while(i < number):
                 x = random.randint(0, self.cols-1)
                 y = random.randint(0, self.rows-1)
                 dir = random.randint(0,3)
-    
-                if(dir == 0):  # up border
+
+                if(dir == 0 and not self.grid[y][x].has_up_border()):  # up border
                     self.grid[y][x].set_up_border()
-                    
+
                     if(y-1 >= 0):
                         self.grid[y-1][x].set_down_border()
-                    
+
                     pygame.draw.line(self.window, (255,0,0), (x*self.cell_size,y*self.cell_size),((x+1)*self.cell_size, y*self.cell_size))
-                elif(dir == 1):  # down border
+                    i += 1
+                elif(dir == 1 and not self.grid[y][x].has_down_border()):  # down border
                     self.grid[y][x].set_down_border()
-                    
+
                     if(y+1 < self.rows):
-                        self.grid[y+1][x].set_up_border()                
-                    
+                        self.grid[y+1][x].set_up_border()
+
                     pygame.draw.line(self.window, (255,0,0),(x*self.cell_size,(y+1)*self.cell_size), ((x+1)*self.cell_size,(y+1)*self.cell_size))
-                elif(dir == 2):  # left border
+                    i += 1
+                elif(dir == 2 and not self.grid[y][x].has_left_border()):  # left border
                     self.grid[y][x].set_left_border()
-                    
+
                     if(x-1 >= 0):
-                        self.grid[y][x-1].set_right_border()                
-                    
+                        self.grid[y][x-1].set_right_border()
+
                     pygame.draw.line(self.window, (255,0,0),(x*self.cell_size, y*self.cell_size), (x*self.cell_size, (y+1)*self.cell_size))
-                elif(dir == 3):  # right border
+                    i += 1
+                elif(dir == 3 and not self.grid[y][x].has_right_border()):  # right border
                     self.grid[y][x].set_right_border()
-                    
+
                     if(x+1 < self.cols):
-                        self.grid[y][x+1].set_left_border()                
-                    
+                        self.grid[y][x+1].set_left_border()
+
                     pygame.draw.line(self.window, (255,0,0),((x+1)*self.cell_size, y*self.cell_size), ((x+1)*self.cell_size, (y+1)*self.cell_size))
+                    i += 1
                 else:
                     pass
 
@@ -113,4 +119,3 @@ class room:
         self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
         self.vacuum = [row, col]
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
-
