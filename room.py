@@ -1,4 +1,4 @@
-import pygame
+import pygame as pygame
 import random
 from tile import tile
 
@@ -43,7 +43,7 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
     def draw_borders(self):
-            number = random.randint(0, min(self.rows, self.cols)-1)
+            number = random.randint(0, min(self.rows, self.cols)-1 + 5)
             for i in range(number):
                 x = random.randint(0, self.cols-1)
                 y = random.randint(0, self.rows-1)

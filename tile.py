@@ -26,7 +26,7 @@ class tile:
         self.right_border = right
         self.down_border = down
         self.up_border = up
-        return has_borders()
+        return self.has_borders()
 
     def set_up_border(self):
         self.up_border = True
@@ -87,3 +87,6 @@ class tile:
 
     def get_string_id(self):
         return "y" + str(self.x_pos) + "x" + str(self.y_pos)
+
+    def get_data_string(self):
+        return "Pos:" + self.get_string_id() + " - Borders" + str(self.has_borders())

@@ -92,7 +92,7 @@ def shortest(v, path):
 import heapq
 
 def dijkstra(aGraph, start, target):
-    print ('Dijkstra shortest path')
+    #print ('Dijkstra shortest path')
     # Set the distance for the start node to zero 
     start.set_distance(0)
 
