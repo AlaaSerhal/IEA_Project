@@ -1,4 +1,4 @@
-import pygame
+import pygame as pygame
 from vacuum import vacuum
 import PySimpleGUI as sg
 from room import room
@@ -58,8 +58,18 @@ def main():
     # window.blit(dirt_img, (200,200))
 
     pos = None
+<<<<<<< HEAD
     mySolver = solver(r.get_array())
     count = 0
+||||||| merged common ancestors
+    mySolver = solver(r.get_array())
+
+=======
+    mySolver = solver(r.get_array())
+
+    tempLastLoc = None
+    pos2 = None
+>>>>>>> 35b37aca47a7bf9778463f4c2c0c7097fd8a1146
 
     path = ["D", "L", "U", "R"]
     while run:
@@ -72,6 +82,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+<<<<<<< HEAD
 
         v.move_to_closest_dirt()
         count += 1
@@ -111,6 +122,99 @@ def main():
         #     elif(p == "D"):
         #         v.move_down()
         #     pygame.time.delay(500)
+||||||| merged common ancestors
+
+        #EXPLORE MAP CODE
+        #CASE 4
+        if(pos is None):
+            pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
+            print('target pos: ' + str(pos) )
+
+        if (not pos[0] == -1):
+
+            path = mySolver.getLastActualUsedPath()
+
+            print('path: ' + str(path) )
+
+            print(r.vacuum_position() )
+
+            pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
+
+            print('target pos: ' + str(pos) )
+
+            #pygame.display.update()
+
+        else:
+            path = []
+
+        #END OF EXPLORATION
+
+        for p in path:
+            if(p == "L"):
+                v.move_left()
+            elif(p == "R"):
+                v.move_right()
+            elif(p == "U"):
+                v.move_up()
+            elif(p == "D"):
+                v.move_down()
+            pygame.time.delay(500)
+=======
+
+        #EXPLORE MAP CODE
+        #CASE 4
+
+
+
+        if(pos is None):
+            pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
+            print('target pos: ' + str(pos) )
+
+        if (not pos[0] == -1):
+
+            path = mySolver.getLastActualUsedPath()
+
+            print('path: ' + str(path) )
+
+            print(r.vacuum_position() )
+
+            tempLastLoc = copy.deepcopy( pos )
+
+            pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
+
+            print('target pos: ' + str(pos) )
+
+            #pygame.display.update()
+
+        else:
+
+            if(pos2 is None):
+                pos2 = tempLastLoc
+
+
+
+            pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+
+            print("pos 2")
+            print(pos2)
+
+            path = mySolver.getLastActualUsedPath()
+
+            #path = []
+
+        #END OF EXPLORATION
+
+        for p in path:
+            if(p == "L"):
+                v.move_left()
+            elif(p == "R"):
+                v.move_right()
+            elif(p == "U"):
+                v.move_up()
+            elif(p == "D"):
+                v.move_down()
+            pygame.time.delay(500)
+>>>>>>> 35b37aca47a7bf9778463f4c2c0c7097fd8a1146
 
         pygame.display.update()
 
