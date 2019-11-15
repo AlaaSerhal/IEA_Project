@@ -4,6 +4,7 @@ from tile import tile
 
 class room:
     def __init__(self, cell_size, rows, cols, window):
+        self.dirt_list = []
         self.cell_size = cell_size
         self.rows = rows
         self.cols = cols
@@ -43,7 +44,7 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
     def draw_borders(self):
-            number = random.randint(0, min(self.rows, self.cols)-1)
+            number = random.randint(0, min(self.rows, self.cols)+5)
             print("number of borders: ", number)
             i = 0
             while(i < number):
@@ -92,6 +93,9 @@ class room:
         left = int((col*cell_size)+2)
         top = int((row*cell_size)+2)
         self.window.blit(self.dirt_img, (left, top))
+        element = [row, col]
+        if(element not in self.dirt_list):
+            self.dirt_list.append(element)
         pygame.display.update()
 
     def get_window(self):
@@ -112,7 +116,16 @@ class room:
     def vacuum_position(self):
         return self.vacuum
 
+    def get_vacuum_tile(self):
+        return self.grid[self.vacuum[0]][self.vacuum[1]]
+
+    def get_dirt_list(self):
+        return self.dirt_list
+
     def clean_tile(self, row, col):
+        element = [row, col]
+        if(element in self.dirt_list):
+            self.dirt_list.remove(element)
         self.grid[row][col].clean()
 
     def set_vacuum(self, row, col):
