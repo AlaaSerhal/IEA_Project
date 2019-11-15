@@ -4,6 +4,8 @@ from dij import dijkstra
 from dij import shortest
 
 import copy
+import random
+
 
 class solver:
 
@@ -11,6 +13,8 @@ class solver:
     def __init__(self, grid):
         
         self.actualMovedPath = []
+
+        lastGraph = None
 
         self.trueGrid = grid
         
@@ -47,6 +51,78 @@ class solver:
                 
         return True
     
+    #add GA////////////////////
+
+    def getNextDirt(self,currPos):
+
+        for row in range(0,len(self.exploredGridActual)):
+            for col in range(0,len(self.exploredGridActual[0])):
+                if(  self.exploredGridActual[row][col].has_dirt() ):
+                    if(not ( currPos[0] == row and  currPos[1] == col)  ):
+                        return [row,col]
+        
+        return [-1,-1]
+
+    def getTilePathForDirtExploration(self):
+
+        col = random.randint(0, len(self.exploredGridActual[0])-1)
+        row = random.randint(0, len(self.exploredGridActual)-1)
+
+        return [row,col]
+
+    #///////////////////////////////////
+
+    def dirtPathIterator(self,currPos):
+        
+        #if there is dirt previously explored g to it
+        #else go to random place to discover dirt
+        
+        print( "Dest to go to for dirt" )
+        print ( self.getNextDirt(currPos) )
+
+        if( not self.getNextDirt(currPos)[0] == -1 ):
+
+            currentGraph = copy.deepcopy (self.getLastGraph() )
+            #currentGraph = self.transformGridToGraph(self.getExploredGrid())
+            
+
+            destPos = self.getNextDirt(currPos)
+           
+            pathDir = self.getPathDirections(self.getExploredGrid()
+            ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
+            
+            print("path dir")
+            print(pathDir)
+
+            newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
+            
+            print("new pos")
+            print(newCurrPos)
+
+            return newCurrPos
+            
+
+        else:
+
+            currentGraph = copy.deepcopy (self.getLastGraph() )
+            
+            destPos = self.getTilePathForDirtExploration()
+
+            pathDir = self.getPathDirections(self.getExploredGrid()
+            ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
+            
+            newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
+            
+            if( not (destPos[0] == newCurrPos[0] and destPos[1] == newCurrPos[1]) ):
+                print(destPos)
+                print(newCurrPos)
+                exit()
+
+            return destPos
+
+     
+
+
     def discoverMapIter(self,currPos):
         
     
@@ -92,14 +168,20 @@ class solver:
         self.exploredGrid[row][col] = True
         self.exploredGridActual[row][col] = copy.deepcopy( grid[row][col] )
         
+        self.exploredGridActual[row][col].set_dirty(grid[row][col].has_dirt()) 
+
         if( grid[row][col].has_right_border() and col+1 < len(grid[0]) ):
             self.exploredGridActual[row][col+1].set_left_border()
+            self.exploredGridActual[row][col+1].set_dirty(grid[row][col+1].has_dirt()) 
         if( grid[row][col].has_left_border() and col-1 >= 0 ):
             self.exploredGridActual[row][col-1].set_right_border()
+            self.exploredGridActual[row][col-1].set_dirty(grid[row][col-1].has_dirt()) 
         if( grid[row][col].has_up_border() and row-1 >= 0 ):
             self.exploredGridActual[row-1][col].set_down_border()
+            self.exploredGridActual[row-1][col].set_dirty(grid[row-1][col].has_dirt()) 
         if( grid[row][col].has_down_border() and row+1 < len(grid) ):
             self.exploredGridActual[row+1][col].set_up_border()
+            self.exploredGridActual[row+1][col].set_dirty(grid[row+1][col].has_dirt()) 
                 
         
         
@@ -109,7 +191,7 @@ class solver:
         
         self.actualMovedPath = []
 
-        self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+        #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
         
         for  idx in range(0,len(path)) :
             if(path[idx] == 'U'):
@@ -166,8 +248,11 @@ class solver:
 
         return self.actualMovedPath
 
-    @staticmethod
-    def transformGridToGraph(grid):
+    def getLastGraph(self):
+
+        return self.lastGraph
+
+    def transformGridToGraph(self,grid):
     
         g = Graph()
         
@@ -192,6 +277,9 @@ class solver:
                 if(not grid[y][x].has_right_border()  ):
                     g.add_edge(grid[y][x].get_string_id(), grid[y][x+1].get_string_id(), 1)     
     
+        
+        self.lastGraph = copy.deepcopy (g)
+
         return g
     
         #print ('Graph data:')

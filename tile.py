@@ -43,6 +43,9 @@ class tile:
     def dirty(self):
         self.dirt = True
 
+    def set_dirty(self,hasDirt):
+        self.dirt = hasDirt
+
     def clean(self):
         if(self.vacuum and self.dirt):
             self.dirt = False

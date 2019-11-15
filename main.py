@@ -1,4 +1,4 @@
-import pygame
+import pygame as pygame
 from vacuum import vacuum
 import PySimpleGUI as sg
 from room import room
@@ -60,6 +60,8 @@ def main():
     pos = None
     mySolver = solver(r.get_array())        
 
+    tempLastLoc = None
+    pos2 = None
 
     path = ["D", "L", "U", "R"]
     while run:
@@ -72,6 +74,9 @@ def main():
         
         #EXPLORE MAP CODE
         #CASE 4
+
+        
+
         if(pos is None):
             pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
             print('target pos: ' + str(pos) )
@@ -84,6 +89,8 @@ def main():
             
             print(r.vacuum_position() )
             
+            tempLastLoc = copy.deepcopy( pos )
+
             pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
             
             print('target pos: ' + str(pos) )
@@ -91,7 +98,20 @@ def main():
             #pygame.display.update()
             
         else:
-            path = []
+
+            if(pos2 is None):
+                pos2 = tempLastLoc
+                
+
+
+            pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+
+            print("pos 2")
+            print(pos2)
+
+            path = mySolver.getLastActualUsedPath()
+                    
+            #path = []
 
         #END OF EXPLORATION
 
