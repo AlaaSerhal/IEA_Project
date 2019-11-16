@@ -1,5 +1,6 @@
 import pygame
-
+import operator
+import random
 from math import hypot
 
 class vacuum:
@@ -8,6 +9,8 @@ class vacuum:
         self.room = room
         self.window = window
         self.prev_move = None
+        self.prev_prev_move = None
+        self.loop = False
 
     def set_position(self, row, col):
         old = self.room.vacuum_position()
@@ -31,7 +34,8 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_up_border() and row > 0):
             self.set_position(row-1, col)
-            self.prev_move = "U"
+            self.prev_prev_move = self.prev_move
+            self.prev_move = 1
         else:
             raise Exception("Invalid move! Cannot move up from current position.")
 
@@ -42,7 +46,8 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
             self.set_position(row+1, col)
-            self.prev_move = "D"
+            self.prev_prev_move = self.prev_move
+            self.prev_move = -1
         else:
             raise Exception("Invalid move! Cannot move down from current position.")
 
@@ -53,7 +58,8 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
             self.set_position(row, col+1)
-            self.prev_move = "R"
+            self.prev_prev_move = self.prev_move
+            self.prev_move = 2
         else:
             raise Exception("Invalid move! Cannot move right from current position.")
 
@@ -64,7 +70,8 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_left_border() and col > 0):
             self.set_position(row, col-1)
-            self.prev_move = "L"
+            self.prev_prev_move = self.prev_move
+            self.prev_move = -2
         else:
             raise Exception("Invalid move! Cannot move up from current position.")
 
@@ -106,23 +113,24 @@ class vacuum:
                 if(dist < min_distance):
                     min_distance = dist
                     closest_dirt = [dirt[0], dirt[1]]
-        print("closest dirt: ", closest_dirt, " at distance: ", min_distance)
+        # print("closest dirt: ", closest_dirt, " at distance: ", min_distance)
 
         min_new_dist = 10000
         best_move = ""
-        if(len(valid_moves) == 1):
-            pass
-        elif(self.prev_move == "U"):
-            valid_moves.remove("D")
-        elif(self.prev_move == "D"):
-            valid_moves.remove("U")
-        elif(self.prev_move == "R"):
-            valid_moves.remove("L")
-        elif(self.prev_move == "L"):
-            valid_moves.remove("R")
-        else:
-            pass
 
+        # if(len(valid_moves) == 1):
+        #     pass
+        # elif(self.prev_move == "U"):
+        #     valid_moves.remove("D")
+        # elif(self.prev_move == "D"):
+        #     valid_moves.remove("U")
+        # elif(self.prev_move == "R"):
+        #     valid_moves.remove("L")
+        # elif(self.prev_move == "L"):
+        #     valid_moves.remove("R")
+        # else:
+        #     pass
+        dict = {}
         for move in valid_moves:
             if(move == "U"):
                 new_pos = [current_position[0]-1, current_position[1]]
@@ -135,10 +143,34 @@ class vacuum:
             else:
                 pass
             new_dist = self.calculate_distance(new_pos, closest_dirt)
-            if(new_dist < min_new_dist):
-                min_new_dist = new_dist
-                best_move = move
-        print("best move is: ", best_move)
+            dict[new_dist] = move
+            # if(new_dist < min_new_dist):
+            #     min_new_dist = new_dist
+            #     best_move = move
+        # print("best move is: ", best_move)
+        sorted_dict = sorted(dict.items(), key=operator.itemgetter(0))
+        best_move = sorted_dict[0][1]
+
+
+        if(best_move == "U"):
+            x = 1
+        elif(best_move == "D"):
+            x = -1
+        elif(best_move == "R"):
+            x = 2
+        elif(best_move == "L"):
+            x = -2
+        else:
+            x = 0
+
+        if(self.loop is True):
+            if(len(sorted_dict) > 1):
+                best_move = sorted_dict[random.randint(1, len(sorted_dict)-1)][1]
+            print("getting unstuck")
+            self.loop = False
+
+        if(x == self.prev_prev_move and x == -self.prev_move):
+            self.loop = True
 
         if(best_move == "U"):
             self.move_up()

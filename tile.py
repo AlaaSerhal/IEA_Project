@@ -1,5 +1,6 @@
 class tile:
     def __init__(self, x_pos, y_pos):
+        self.probability = 0
         self.dirt = False
         self.vacuum = None
         self.left_border = False
@@ -8,6 +9,12 @@ class tile:
         self.up_border = False
         self.x_pos = x_pos
         self.y_pos = y_pos
+
+    def set_proba(self, proba):
+        self.probability = proba
+
+    def get_proba(self):
+        return int(self.probability)
 
     def set_x_pos(self, x_pos):
         self.x_pos = x_pos
