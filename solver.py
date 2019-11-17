@@ -6,12 +6,16 @@ from dij import shortest
 import copy
 import random
 
+from GA import GA
 
 class solver:
 
 
     def __init__(self, grid):
         
+        self.gntcAlgrth = GA(5)
+        self.tempPool = []
+
         self.actualMovedPath = []
 
         lastGraph = None
@@ -65,10 +69,31 @@ class solver:
 
     def getTilePathForDirtExploration(self):
 
-        col = random.randint(0, len(self.exploredGridActual[0])-1)
-        row = random.randint(0, len(self.exploredGridActual)-1)
+        rowCol = []
+        
+        if( not self.gntcAlgrth.hasPoolInit()):
+            self.tempPool = self.gntcAlgrth.createRandomInitPool(len(self.exploredGrid) , len(self.exploredGrid[0]) )
+        else:
 
-        return [row,col]
+            if(random.random() < 0.3):
+                rowCol = self.gntcAlgrth.getUnscoredORlowScored()
+                return [rowCol[0],rowCol[1]]
+            else:
+                self.gntcAlgrth.updatePool( self.gntcAlgrth.selectForPopulationPool(5) )
+                if(  len(self.tempPool) == 0):
+                    self.tempPool =  self.gntcAlgrth.getPool()
+            
+
+        if( len(self.tempPool) > 0 ):
+            rowCol = self.tempPool.pop()
+            return [rowCol[0],rowCol[1]]
+
+        #col = random.randint(0, len(self.exploredGridActual[0])-1)
+        #row = random.randint(0, len(self.exploredGridActual)-1)
+        print("can't reach here")
+        exit()
+        
+        return [rowCol[0],rowCol[1]]
 
     #///////////////////////////////////
 
@@ -205,6 +230,9 @@ class solver:
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
+                    if( self.gntcAlgrth.hasPoolInit()):
+                        self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
+
             elif(path[idx] == 'R'):
                 if( grid[currentPos[0]][currentPos[1]].has_right_border() ):
                     #the end
@@ -215,6 +243,10 @@ class solver:
                     self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
+
+                    if( self.gntcAlgrth.hasPoolInit()):
+                        self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
+
                     
             elif(path[idx] == 'L'):
                 if( grid[currentPos[0]][currentPos[1]].has_left_border() ):
@@ -228,6 +260,10 @@ class solver:
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
+                    if( self.gntcAlgrth.hasPoolInit()):
+                        self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
+
+
             elif(path[idx] == 'D'):
                 if( grid[currentPos[0]][currentPos[1]].has_down_border() ):
                     #the end
@@ -238,6 +274,10 @@ class solver:
                     self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
+
+                    if( self.gntcAlgrth.hasPoolInit()):
+                        self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
+
         
         
 
