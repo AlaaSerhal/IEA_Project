@@ -8,13 +8,14 @@ class vacuum:
         self.img = pygame.image.load("vacuum.png")
         self.room = room
         self.window = window
+        # used to keep track of last 4 moves
         self.prev_move = None
         self.prev_prev_move = None
         self.prev_prev_prev_move = None
         self.prev_prev_prev_prev_move = None
         self.loop = False
 
-    def set_position(self, row, col):
+    def set_position(self, row, col):  # sets position of vaccum and moves the image and deletes the old image
         old = self.room.vacuum_position()
         old_col = old[1]
         old_row = old[0]
@@ -36,11 +37,12 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_up_border() and row > 0):
             self.set_position(row-1, col)
+            # keeping track of previous moves
             self.prev_prev_prev_prev_move = self.prev_prev_prev_move
             self.prev_prev_prev_move = self.prev_prev_move
             self.prev_prev_move = self.prev_move
             self.prev_move = 1
-        else:
+        else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move up from current position.")
 
     def move_down(self):
@@ -50,11 +52,12 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
             self.set_position(row+1, col)
+            # keeping track of previous moves
             self.prev_prev_prev_prev_move = self.prev_prev_prev_move
             self.prev_prev_prev_move = self.prev_prev_move
             self.prev_prev_move = self.prev_move
             self.prev_move = -1
-        else:
+        else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move down from current position.")
 
     def move_right(self):
@@ -64,11 +67,12 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
             self.set_position(row, col+1)
+            # keeping track of previous moves
             self.prev_prev_prev_prev_move = self.prev_prev_prev_move
             self.prev_prev_prev_move = self.prev_prev_move
             self.prev_prev_move = self.prev_move
             self.prev_move = 2
-        else:
+        else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move right from current position.")
 
     def move_left(self):
@@ -78,14 +82,15 @@ class vacuum:
         col = position[1]
         if(not grid[row][col].has_left_border() and col > 0):
             self.set_position(row, col-1)
+            # keeping track of previous moves
             self.prev_prev_prev_prev_move = self.prev_prev_prev_move
             self.prev_prev_prev_move = self.prev_prev_move
             self.prev_prev_move = self.prev_move
             self.prev_move = -2
-        else:
+        else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move up from current position.")
 
-    def get_moves_at_pos(self, pos):
+    def get_moves_at_pos(self, pos):  # returns valid moves from a certain position in a grid
         moves = []
         tile = self.room.get_array()[pos[0]][pos[1]]
         if(not tile.has_up_border()):
@@ -98,7 +103,7 @@ class vacuum:
             moves.append("R")
         return moves
 
-    def get_valid_moves(self):
+    def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
         tile = self.room.get_vacuum_tile()
         if(not tile.has_up_border()):
@@ -111,7 +116,7 @@ class vacuum:
             moves.append("R")
         return moves
 
-    def calculate_distance(self, pos1, pos2):
+    def calculate_distance(self, pos1, pos2):  # calculates straight line distance between 2 positions
         if(pos1[0] == pos2[0]):
             dist = abs(pos1[1] - pos2[1])
         elif(pos1[1] == pos2[1]):
@@ -122,7 +127,7 @@ class vacuum:
             dist = hypot(delta_c, delta_r)
         return dist
 
-    def get_relative_position(self, src, dst):
+    def get_relative_position(self, src, dst):  # checks which direction the dirt is
         src_row = src[0]
         src_col = src[1]
         dst_row = dst[0]
@@ -130,44 +135,46 @@ class vacuum:
 
         pos = []
 
-        if(dst_row > src_row):
+        if(dst_row > src_row):  # dirt is below
             pos.append("D")
-        elif(dst_row < src_row):
+        elif(dst_row < src_row):  # dirt is above
             pos.append("U")
-        else:
+        else:  # dirt is at even horizontal location
             pos.append("E")
 
-        if(dst_col > src_col):
+        if(dst_col > src_col):  # dirt is to the right
             pos.append("R")
-        elif(dst_col < src_col):
+        elif(dst_col < src_col):  # dirt is to the left
             pos.append("L")
-        else:
+        else:  # dirt is at same vertical location
             pos.append("E")
 
         return pos
 
 
-    def move_to_closest_dirt(self):
+    def move_to_closest_dirt(self):  # take one step closer to closest dirt
         distances = []
         valid_moves = self.get_valid_moves()
         min_distance = 10000
         closest_dirt = None
         current_position = self.room.vacuum_position()
         dirt_list = self.room.get_dirt_list()
-        if(len(dirt_list) != 0):
-            for dirt in dirt_list:
+        if(len(dirt_list) != 0):  # check if there is any dirt left on the map
+            for dirt in dirt_list:  # calculate distance between vacuum and every dirt
                 if(len(valid_moves) != 0):
                     dist = self.calculate_distance(current_position, dirt)
                     distances.append(dist)
-                    if(dist < min_distance):
+                    if(dist < min_distance):  # get closest dirt
                         min_distance = dist
                         closest_dirt = [dirt[0], dirt[1]]
 
             min_new_dist = 10000
             best_move = ""
 
+            # prevent vacuumfrom going back the same way it came if it can go elsewhere
             if(len(valid_moves) == 1):
                 pass
+            # we keep track of previous moves using nummbers of different signs to indicate direction
             elif(self.prev_move == 1):
                 valid_moves.remove("D")
             elif(self.prev_move == -1):
@@ -179,6 +186,7 @@ class vacuum:
             else:
                 pass
 
+            # evaluate distance to closest dirt from each valid moves
             for move in valid_moves:
                 if(move == "U"):
                     new_pos = [current_position[0]-1, current_position[1]]
@@ -192,11 +200,12 @@ class vacuum:
                     pass
                 new_dist = self.calculate_distance(new_pos, closest_dirt)
 
-                if(new_dist < min_new_dist):
+                if(new_dist < min_new_dist): # chose move that minimizes distance
                     min_new_dist = new_dist
                     best_move = move
                     next_pos = new_pos
 
+            # prevent vacuum from getting stuck behind border in endless loop if dirt is directly behind it
             rel_pos = self.get_relative_position(next_pos, closest_dirt)
             next_valid_moves = self.get_moves_at_pos(next_pos)
             case_a = True if (min_new_dist == 1 and rel_pos[1] == "R" and not "R" in next_valid_moves) else False
@@ -204,15 +213,16 @@ class vacuum:
             case_c = True if (min_new_dist == 1 and rel_pos[0] == "U" and not "U" in next_valid_moves) else False
             case_d = True if (min_new_dist == 1 and rel_pos[0] == "D" and not "D" in next_valid_moves) else False
 
+            # if vacuum might get stuck, remove best move and go with safe sub optimal move
             if(case_a or case_b or case_c or case_d and len(valid_moves) > 1):
                 valid_moves.remove(best_move)
                 print("trying to escape")
 
             min_new_dist = 10000
             second_min = 10000
-
             second_best = None
-            for move in valid_moves:
+
+            for move in valid_moves:  # re-evaluate moves if best option has been removed
                 if(move == "U"):
                     new_pos = [current_position[0]-1, current_position[1]]
                 elif(move == "D"):
@@ -225,7 +235,7 @@ class vacuum:
                     pass
                 new_dist = self.calculate_distance(new_pos, closest_dirt)
 
-                if(new_dist < min_new_dist):
+                if(new_dist < min_new_dist):  # get best move and second best move
                     second_min = min_new_dist
                     second_best = best_move
 
@@ -233,13 +243,14 @@ class vacuum:
                     best_move = move
                     next_pos = new_pos
 
-                elif(new_dist < second_min and new_dist != min_new_dist):
+                elif(new_dist < second_min and new_dist != min_new_dist):  # second best move
                     second_min = new_dist
                     second_best = move
 
-            if(second_min == 10000):
+            if(second_min == 10000):  # if second best move does not exist
                 second_best = best_move
 
+            # map best move to number
             if(best_move == "U"):
                 x = 1
             elif(best_move == "D"):
@@ -249,12 +260,12 @@ class vacuum:
             else:
                 x = -2
 
+            # check if vacuum is going in a loop
             if(x == self.prev_prev_prev_prev_move and self.prev_move == -self.prev_prev_prev_move and self.prev_prev_move == -self.prev_prev_prev_prev_move and not self.loop):
-                print("backtracking...")
                 print("making second best move")
-                best_move = second_best
+                best_move = second_best  # if in a loop we go with the second best move to exit loop
 
-
+            # move one step if the right direction
             if(best_move == "U"):
                 self.move_up()
             elif(best_move == "D"):
@@ -265,5 +276,5 @@ class vacuum:
                 self.move_right()
             else:
                 pass
-        else:
+        else:  # no dirt left to chase
             pass

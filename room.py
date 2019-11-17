@@ -9,10 +9,10 @@ class room:
         self.rows = rows
         self.cols = cols
         self.window = window
-        self.vacuum = [rows//2, cols//2]
+        self.vacuum = [rows//2, cols//2]  # vacuum starts in the middle
         self.grid = []
         self.dirt_img = pygame.image.load("dirt.png")
-        for row in range(rows):
+        for row in range(rows):  # create array
             self.grid.append([])
             for col in range(cols):
                 self.grid[row].append(tile(row, col))
@@ -26,7 +26,7 @@ class room:
                     self.grid[row][col].set_right_border()
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
 
-    def draw_grid(self):
+    def draw_grid(self):  # draw grid and outside borders
         x = 0
         y = 0
         for row in range(self.rows):
@@ -43,16 +43,18 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (self.cols*self.cell_size-1,0), (self.cols*self.cell_size-1, self.rows*self.cell_size))
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
-    def draw_borders(self, number=None):
-            if(number == None):
+    def draw_borders(self, number=None):  # generate and draw borders randomly (in red)
+            if(number == None):  # if user does not specify number of borders
                 number = random.randint(0, min(self.rows, self.cols)+5)
             else:
                 pass
             print("number of borders: ", number)
             i = 0
             while(i < number):
+                # coordinates
                 x = random.randint(0, self.cols-1)
                 y = random.randint(0, self.rows-1)
+                # border on cell, up, down, left, right
                 dir = random.randint(0,3)
 
                 if(dir == 0 and not self.grid[y][x].has_up_border()):  # up border
@@ -90,7 +92,7 @@ class room:
                 else:
                     pass
 
-    def set_dirt(self, row, col):
+    def set_dirt(self, row, col):  # set dirt at position
         self.grid[row][col].dirty()
         cell_size = self.cell_size
         left = int((col*cell_size)+2)
@@ -131,7 +133,7 @@ class room:
             self.dirt_list.remove(element)
         self.grid[row][col].clean()
 
-    def set_vacuum(self, row, col):
+    def set_vacuum(self, row, col):  # sets vacuum in room
         self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
         self.vacuum = [row, col]
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()

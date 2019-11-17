@@ -40,8 +40,6 @@ def main():
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
     pygame.init()
 
-    # dirt_img = pygame.image.load("dirt.png")
-
     window = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Vacuum Cleaner Agent")
     run = True
@@ -50,12 +48,8 @@ def main():
     r.draw_grid()
     r.draw_borders()
 
-    # r.add_nodes()
-
     v = vacuum(r, window)
     d = dirt(r, window, 4)
-    # window.blit(vacuum_img, (50,50))
-    # window.blit(dirt_img, (200,200))
 
     pos = None
     mySolver = solver(r.get_array())
@@ -63,11 +57,8 @@ def main():
     tempLastLoc = None
     pos2 = None
 
-
-
-#MARIO ADD YOU CODE HERE
 # depending on the Specific case
-    if(case1):
+    if(case1):  # fully observable with set amount of dirt
         while run:
             pygame.time.delay(200)
             clock.tick(10)
@@ -77,7 +68,7 @@ def main():
                     run = False
             v.move_to_closest_dirt()
 
-    elif(case2):
+    elif(case2):  # fully observable and dirt keeps getting added
         count = 0
         while run:
             if(count == 4):
@@ -93,8 +84,6 @@ def main():
             v.move_to_closest_dirt()
             count += 1
 
-
-    #SAMER CODE HERE
     #Partially visible in HERE
     elif(case3):
 
