@@ -58,26 +58,32 @@ def main():
     # window.blit(dirt_img, (200,200))
 
     pos = None
-    mySolver = solver(r.get_array())     
+    mySolver = solver(r.get_array())
 
     tempLastLoc = None
     pos2 = None
 
 
 
-#MARIO ADD YOU CODE HERE  
+#MARIO ADD YOU CODE HERE
 # depending on the Specific case
     if(case1):
+        while run:
+            pygame.time.delay(200)
+            clock.tick(10)
 
-        # MARIO
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+            v.move_to_closest_dirt()
+
+    elif(case2):
         count = 0
-
-        path = ["D", "L", "U", "R"]
         while run:
             if(count == 4):
-                d.rnd_dirt(1)
+                d.probabilistic_dirt(1)
                 count = 0
-            pygame.time.delay(500)
+            pygame.time.delay(200)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -96,7 +102,7 @@ def main():
 
 
         while run:
-            
+
             #FOR DEBUGGING
             #NOTE TO SELF => REMOVE LATER ON
             d.rnd_dirt_DEBUG(1)
@@ -108,37 +114,37 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            
+
             #EXPLORE MAP CODE
             #CASE 4
 
-            
+
 
             if(pos is None):
                 pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
                 print('target pos: ' + str(pos) )
-            
+
             if (not pos[0] == -1):
-        
+
                 path = mySolver.getLastActualUsedPath()
-                
+
                 print('path: ' + str(path) )
-                
+
                 print(r.vacuum_position() )
-                
+
                 tempLastLoc = copy.deepcopy( pos )
 
                 pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
-                
+
                 print('target pos: ' + str(pos) )
-                
+
                 #pygame.display.update()
-                
+
             else:
 
                 if(pos2 is None):
                     pos2 = tempLastLoc
-                    
+
 
 
                 pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
@@ -147,7 +153,7 @@ def main():
                 print(pos2)
 
                 path = mySolver.getLastActualUsedPath()
-                        
+
                 #path = []
 
             #END OF EXPLORATION
@@ -164,7 +170,7 @@ def main():
                 pygame.time.delay(100)
 
             pygame.display.update()
-    
+
 
 
     pygame.quit()

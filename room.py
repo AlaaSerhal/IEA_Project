@@ -43,8 +43,11 @@ class room:
         pygame.draw.line(self.window, (255,0,0), (self.cols*self.cell_size-1,0), (self.cols*self.cell_size-1, self.rows*self.cell_size))
         pygame.draw.line(self.window, (255,0,0), (0,self.rows*self.cell_size-1), (self.cols*self.cell_size, self.rows*self.cell_size-1))
 
-    def draw_borders(self):
-            number = random.randint(0, min(self.rows, self.cols)+5)
+    def draw_borders(self, number=None):
+            if(number == None):
+                number = random.randint(0, min(self.rows, self.cols)+5)
+            else:
+                pass
             print("number of borders: ", number)
             i = 0
             while(i < number):

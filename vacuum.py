@@ -153,139 +153,117 @@ class vacuum:
         min_distance = 10000
         closest_dirt = None
         current_position = self.room.vacuum_position()
+        dirt_list = self.room.get_dirt_list()
+        if(len(dirt_list) != 0):
+            for dirt in dirt_list:
+                if(len(valid_moves) != 0):
+                    dist = self.calculate_distance(current_position, dirt)
+                    distances.append(dist)
+                    if(dist < min_distance):
+                        min_distance = dist
+                        closest_dirt = [dirt[0], dirt[1]]
 
-        for dirt in self.room.get_dirt_list():
-            if(len(valid_moves) != 0):
-                dist = self.calculate_distance(current_position, dirt)
-                distances.append(dist)
-                if(dist < min_distance):
-                    min_distance = dist
-                    closest_dirt = [dirt[0], dirt[1]]
-        # print("closest dirt: ", closest_dirt, " at distance: ", min_distance)
+            min_new_dist = 10000
+            best_move = ""
 
-        min_new_dist = 10000
-        best_move = ""
-
-        if(len(valid_moves) == 1):
-            pass
-        elif(self.prev_move == 1):
-            valid_moves.remove("D")
-        elif(self.prev_move == -1):
-            valid_moves.remove("U")
-        elif(self.prev_move == 2):
-            valid_moves.remove("L")
-        elif(self.prev_move == -2):
-            valid_moves.remove("R")
-        else:
-            pass
-
-        # dict = {}
-        for move in valid_moves:
-            if(move == "U"):
-                new_pos = [current_position[0]-1, current_position[1]]
-            elif(move == "D"):
-                new_pos = [current_position[0]+1, current_position[1]]
-            elif(move == "L"):
-                new_pos = [current_position[0], current_position[1]-1]
-            elif(move == "R"):
-                new_pos = [current_position[0], current_position[1]+1]
+            if(len(valid_moves) == 1):
+                pass
+            elif(self.prev_move == 1):
+                valid_moves.remove("D")
+            elif(self.prev_move == -1):
+                valid_moves.remove("U")
+            elif(self.prev_move == 2):
+                valid_moves.remove("L")
+            elif(self.prev_move == -2):
+                valid_moves.remove("R")
             else:
                 pass
-            new_dist = self.calculate_distance(new_pos, closest_dirt)
-            # dict[new_dist] = move
 
-            if(new_dist < min_new_dist):
-                min_new_dist = new_dist
-                best_move = move
-                next_pos = new_pos
+            for move in valid_moves:
+                if(move == "U"):
+                    new_pos = [current_position[0]-1, current_position[1]]
+                elif(move == "D"):
+                    new_pos = [current_position[0]+1, current_position[1]]
+                elif(move == "L"):
+                    new_pos = [current_position[0], current_position[1]-1]
+                elif(move == "R"):
+                    new_pos = [current_position[0], current_position[1]+1]
+                else:
+                    pass
+                new_dist = self.calculate_distance(new_pos, closest_dirt)
 
-        # sorted_dict = sorted(dict.items(), key=operator.itemgetter(0))
-        # best_move = sorted_dict[0][1]
+                if(new_dist < min_new_dist):
+                    min_new_dist = new_dist
+                    best_move = move
+                    next_pos = new_pos
 
-        rel_pos = self.get_relative_position(next_pos, closest_dirt)
-        next_valid_moves = self.get_moves_at_pos(next_pos)
-        case_a = True if (min_new_dist == 1 and rel_pos[1] == "R" and not "R" in next_valid_moves) else False
-        case_b = True if (min_new_dist == 1 and rel_pos[1] == "L" and not "L" in next_valid_moves) else False
-        case_c = True if (min_new_dist == 1 and rel_pos[0] == "U" and not "U" in next_valid_moves) else False
-        case_d = True if (min_new_dist == 1 and rel_pos[0] == "D" and not "D" in next_valid_moves) else False
+            rel_pos = self.get_relative_position(next_pos, closest_dirt)
+            next_valid_moves = self.get_moves_at_pos(next_pos)
+            case_a = True if (min_new_dist == 1 and rel_pos[1] == "R" and not "R" in next_valid_moves) else False
+            case_b = True if (min_new_dist == 1 and rel_pos[1] == "L" and not "L" in next_valid_moves) else False
+            case_c = True if (min_new_dist == 1 and rel_pos[0] == "U" and not "U" in next_valid_moves) else False
+            case_d = True if (min_new_dist == 1 and rel_pos[0] == "D" and not "D" in next_valid_moves) else False
 
-        if(case_a or case_b or case_c or case_d and len(valid_moves) > 1):
-            valid_moves.remove(best_move)
-            print("trying to escape")
+            if(case_a or case_b or case_c or case_d and len(valid_moves) > 1):
+                valid_moves.remove(best_move)
+                print("trying to escape")
 
-        min_new_dist = 10000
-        second_min = 10000
+            min_new_dist = 10000
+            second_min = 10000
 
-        second_best = None
-        for move in valid_moves:
-            if(move == "U"):
-                new_pos = [current_position[0]-1, current_position[1]]
-            elif(move == "D"):
-                new_pos = [current_position[0]+1, current_position[1]]
-            elif(move == "L"):
-                new_pos = [current_position[0], current_position[1]-1]
-            elif(move == "R"):
-                new_pos = [current_position[0], current_position[1]+1]
-            else:
-                pass
-            new_dist = self.calculate_distance(new_pos, closest_dirt)
-            # dict[new_dist] = move
+            second_best = None
+            for move in valid_moves:
+                if(move == "U"):
+                    new_pos = [current_position[0]-1, current_position[1]]
+                elif(move == "D"):
+                    new_pos = [current_position[0]+1, current_position[1]]
+                elif(move == "L"):
+                    new_pos = [current_position[0], current_position[1]-1]
+                elif(move == "R"):
+                    new_pos = [current_position[0], current_position[1]+1]
+                else:
+                    pass
+                new_dist = self.calculate_distance(new_pos, closest_dirt)
 
-            if(new_dist < min_new_dist):
-                second_min = min_new_dist
+                if(new_dist < min_new_dist):
+                    second_min = min_new_dist
+                    second_best = best_move
+
+                    min_new_dist = new_dist
+                    best_move = move
+                    next_pos = new_pos
+
+                elif(new_dist < second_min and new_dist != min_new_dist):
+                    second_min = new_dist
+                    second_best = move
+
+            if(second_min == 10000):
                 second_best = best_move
 
-                min_new_dist = new_dist
-                best_move = move
-                next_pos = new_pos
+            if(best_move == "U"):
+                x = 1
+            elif(best_move == "D"):
+                x = -1
+            elif(best_move == "R"):
+                x = 2
+            else:
+                x = -2
 
-            elif(new_dist < second_min and new_dist != min_new_dist):
-                second_min = new_dist
-                second_best = move
-
-        if(second_min == 10000):
-            second_best = best_move
-        # print("best move: ", best_move)
-        # print("second best move: ", second_best)
-        if(best_move == "U"):
-            x = 1
-        elif(best_move == "D"):
-            x = -1
-        elif(best_move == "R"):
-            x = 2
-        else:
-            x = -2
-
-        if(x == self.prev_prev_prev_prev_move and self.prev_move == -self.prev_prev_prev_move and self.prev_prev_move == -self.prev_prev_prev_prev_move and not self.loop):
-            print("backtracking...")
-            print("making second best move")
-            best_move = second_best
-            # self.loop = True
-            # go_back = self.prev_prev_prev_move
-            # if(go_back == 1):
-            #     best_move = "D"
-            # elif(go_back == -1):
-            #     best_move == "U"
-            # elif(go_back == 2):
-            #     best_move = "L"
-            # elif(go_back == -2):
-            #     best_move == "R"
-            # else:
-            #     pass
-        # elif(self.loop):
-        #     print("making second best move")
-        #     self.loop = False
-            # best_move = second_best
+            if(x == self.prev_prev_prev_prev_move and self.prev_move == -self.prev_prev_prev_move and self.prev_prev_move == -self.prev_prev_prev_prev_move and not self.loop):
+                print("backtracking...")
+                print("making second best move")
+                best_move = second_best
 
 
-
-        if(best_move == "U"):
-            self.move_up()
-        elif(best_move == "D"):
-            self.move_down()
-        elif(best_move == "L"):
-            self.move_left()
-        elif(best_move == "R"):
-            self.move_right()
+            if(best_move == "U"):
+                self.move_up()
+            elif(best_move == "D"):
+                self.move_down()
+            elif(best_move == "L"):
+                self.move_left()
+            elif(best_move == "R"):
+                self.move_right()
+            else:
+                pass
         else:
             pass
