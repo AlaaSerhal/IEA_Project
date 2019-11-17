@@ -35,7 +35,7 @@ class GA:
         self.hasPool = True
 
         self.matrixFitness =  [ [-1]*cols for _ in range(0,rows) ]
-        self.matrixData = [ [0,0]*len(cols) for _ in range(0,rows) ]
+        self.matrixData = [ [ [0,0] ] *cols for _ in range(0,rows) ]
 
 
         row = random.randint(0,rows-1)
@@ -54,8 +54,11 @@ class GA:
     
     def updateMatrixData(self,row,col, foundDirt):
         
-        visits = self.matrixData[row][col][0] + 1
-        dirtCount = self.matrixData[row][col][1]
+        print("matric data")
+        print(self.matrixData[row][col])
+
+        visits = int (self.matrixData[row][col][0] ) + 1
+        dirtCount =  int (self.matrixData[row][col][1])
         if(foundDirt):
             dirtCount += 1
         
@@ -83,25 +86,33 @@ class GA:
 
             for row in range(len(self.matrixFitness) ) :
                 for col in range(len(self.matrixFitness[0]) ) :
-                    dictionary[self.matrixFitness[row][col]] = [row,col] 
+                    
+                    if(self.matrixFitness[row][col] not in dictionary):
+                        dictionary[self.matrixFitness[row][col]] = [ [row,col] ]
+                    else:
+                        dictionary[self.matrixFitness[row][col]].append ( [row,col]  )
+
 
             indx = 0
+            keysDesc = sorted (dictionary)
+            keysDesc.reverse()
 
-            for i in sorted (dictionary).reverse() : 
-                print ((i, dictionary[i]), end =" ") 
-                if(indx > 4):
-                    break
-                else:
-                    indx+= 1
-                    candidateLoc.append(dictionary[i])
+            for i in keysDesc :
+                for j in dictionary[i]:
+                    print ((i, j), end =" ") 
+                    if(indx > 4):
+                        break
+                    else:
+                        indx+= 1
+                        candidateLoc.append(j)
                     
-        return candidateLoc[ random.randint(0, len(candidateLoc) ) ]
+        return candidateLoc[ random.randint(0, len(candidateLoc)-1 ) ]
 
     def obtainFitnessFromDataREMOVED(self):
 
         for poolItem in self.pop:
             
-            data = self.matrixData[poolItem[0]][poolItem[1]]
+            data = copy.deepcopy( self.matrixData[poolItem[0]][poolItem[1]] )
             
             score = data[1] / data[0]
             if(data[0] == 0):
@@ -115,19 +126,30 @@ class GA:
 
         for row in range(len(self.matrixFitness) ) :
             for col in range(len(self.matrixFitness[0]) ) :
-                dictionary[self.matrixFitness[row][col]] = [row,col] 
+                
+                if(self.matrixFitness[row][col] not in dictionary):
+                    dictionary[self.matrixFitness[row][col]] = [ [row,col] ]
+                else:
+                    dictionary[self.matrixFitness[row][col]].append ( [row,col]  )
 
         indx = 0
         selected = []
 
-        for i in sorted (dictionary).reverse() : 
-            print ((i, dictionary[i]), end =" ") 
-            if(indx > maxSelection):
-                break
-            else:
-                indx+= 1
-                selected.append(dictionary[i])
+        keysDesc = sorted (dictionary)
+        keysDesc.reverse()
+
+        #print(dictionary)
+
+        for i in keysDesc :
+            for j in dictionary[i]:
+                print ((i, j), end =" ") 
+                if(indx > maxSelection):
+                    break
+                else:
+                    indx+= 1
+                    selected.append(j)
                 
+
         return selected
 
     def updatePool(self,newPop):
