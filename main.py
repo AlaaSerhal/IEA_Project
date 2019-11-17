@@ -37,6 +37,7 @@ def main():
             cols=int(values[1])
             dirty_tiles= int(values[2])
             borders=int(values[3])
+
             if event in ('Submit'):
                 print('Accepted Input')
             window.Close()
@@ -59,6 +60,7 @@ def main():
     # r.add_nodes()
 
     v = vacuum(r, window)
+
     d = dirt(r, window, 4)
     # window.blit(vacuum_img, (50,50))
     # window.blit(dirt_img, (200,200))
@@ -75,8 +77,31 @@ def main():
         pygame.time.delay(50)
         clock.tick(10)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            #gameover
+            if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                window.fill((0,0,0))
+                font = pygame.font.Font('freesansbold.ttf', 20)
+                text_surface = font.render("Game Over", True, (150,150,150))
+                text_rect = text_surface.get_rect()
+                text_rect.center = (window.get_width()//2, window.get_height()//2)
+                window.blit(text_surface, text_rect)
+                pygame.display.update()
+                v.set_position((rows//2)+1,(cols//2)-1)
+                pygame.time.delay(2000)
                 run = False
+                #arrows as input
+            if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                if( case1==True or case2==True):
+                    if event.key == pygame.K_LEFT:
+                        v.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        v.move_right()
+                    if event.key == pygame.K_UP:
+                        v.move_up()
+                    if event.key == pygame.K_DOWN:
+                        v.move_down()
+                if event.key == pygame.K_SPACE:
+                    pygame.time.delay(5000)
 
         #EXPLORE MAP CODE
         #CASE 4
