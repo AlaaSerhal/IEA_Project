@@ -60,6 +60,22 @@ class dirt:
         while(i < number and count < 10):
             col = random.randint(0, self.room.get_cols()-1)
             row = random.randint(0, self.room.get_rows()-1)
+            
+            if(self.room.get_array()[row][col].has_dirt() or self.room.get_array()[row][col].has_vacuum()):
+                count += 1
+            else:
+                self.room.set_dirt(row, col)
+                i += 1
+
+
+    def rnd_dirt_DEBUG(self, number):
+        i = 0
+        count = 0
+        while(i < number and count < 10):
+            #col = random.randint(0, self.room.get_cols()-1)
+            #row = random.randint(0, self.room.get_rows()-1)
+            col = random.randint(0, 2)
+            row = random.randint(0, 2)
             if(self.room.get_array()[row][col].has_dirt() or self.room.get_array()[row][col].has_vacuum()):
                 count += 1
             else:
