@@ -1,4 +1,4 @@
-class tile:
+class tile:  # class defines one tile
     def __init__(self, x_pos, y_pos):
         self.probability = 0
         self.dirt = False
