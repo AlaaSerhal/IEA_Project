@@ -96,6 +96,62 @@ def main():
 
     #SAMER CODE HERE
     #Partially visible in HERE
+    elif(case3):
+
+        path = []
+
+        count = 0
+
+        mySolver.expoloreAllBorders()
+
+        while run:
+            
+            if(count >= 3):
+                d.probabilistic_dirt(1)
+                count = 0
+            #FOR DEBUGGING
+            #NOTE TO SELF => REMOVE LATER ON
+            #d.rnd_dirt_DEBUG(1)
+            count += 1
+            #////////////////////////////////////
+
+            pygame.time.delay(50)
+            clock.tick(10)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+
+            #EXPLORE MAP CODE
+            #CASE 4
+
+
+            if(pos2 is None):
+                pos2 = r.vacuum_position()
+
+
+
+            pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+
+            print("pos 2")
+            print(pos2)
+
+            path = mySolver.getLastActualUsedPath()
+
+            #END OF EXPLORATION
+
+            for p in path:
+                if(p == "L"):
+                    v.move_left()
+                elif(p == "R"):
+                    v.move_right()
+                elif(p == "U"):
+                    v.move_up()
+                elif(p == "D"):
+                    v.move_down()
+                pygame.time.delay(100)
+
+            pygame.display.update()
+
     elif(case4):
 
         path = []
@@ -103,10 +159,13 @@ def main():
 
         while run:
 
+            if(count >= 3):
+                d.probabilistic_dirt(1)
+                count = 0
             #FOR DEBUGGING
             #NOTE TO SELF => REMOVE LATER ON
-            d.rnd_dirt_DEBUG(1)
-
+            #d.rnd_dirt_DEBUG(1)
+            count += 1
             #////////////////////////////////////
 
             pygame.time.delay(50)

@@ -59,13 +59,31 @@ class solver:
 
     def getNextDirt(self,currPos):
 
+        dictionaryDistancePath = {}
+
         for row in range(0,len(self.exploredGridActual)):
             for col in range(0,len(self.exploredGridActual[0])):
                 if(  self.exploredGridActual[row][col].has_dirt() ):
                     if(not ( currPos[0] == row and  currPos[1] == col)  ):
-                        return [row,col]
+                        dictionaryDistancePath[ self.calculateDistanceLowCost( [row,col],currPos ) ] = [row,col]
+                        #return [row,col]
         
+        for key in sorted(dictionaryDistancePath):
+            return dictionaryDistancePath[key]
+
         return [-1,-1]
+
+    
+    def calculateDistanceLowCost(self,pos1, pos2):
+        if(pos1[0] == pos2[0]):
+            dist = abs(pos1[1] - pos2[1])
+        elif(pos1[1] == pos2[1]):
+            dist = abs(pos1[0] - pos2[0])
+        else:
+            delta_r = abs(pos1[0] - pos2[0])
+            delta_c = abs(pos1[1] - pos2[1])
+            dist = delta_r + delta_c
+        return dist
 
     def getTilePathForDirtExploration(self):
 
@@ -92,7 +110,7 @@ class solver:
         #row = random.randint(0, len(self.exploredGridActual)-1)
         print("can't reach here")
         exit()
-        
+
         return [rowCol[0],rowCol[1]]
 
     #///////////////////////////////////
@@ -146,7 +164,22 @@ class solver:
             return destPos
 
      
+    def expoloreAllBorders(self):
 
+        self.exploredGridActual = [ [None]*len(self.trueGrid[0]) for _ in range(0,len(self.trueGrid)) ]
+
+
+        for row in range(0,len(self.trueGrid)):
+            for col in range(0,len(self.trueGrid[0])):
+
+                self.exploredGridActual[row][col] = copy.deepcopy( self.trueGrid[row][col] )
+
+                if ( not self.exploredGrid[row][col] ):
+                    self.exploredGridActual[row][col].set_vacuum()
+                    self.exploredGridActual[row][col].clean()
+                    self.exploredGridActual[row][col].remove_vacuum()
+
+        self.transformGridToGraph(self.getExploredGrid())
 
     def discoverMapIter(self,currPos):
         
@@ -177,12 +210,21 @@ class solver:
     # add discovered something new since last path as a variable as to not update graph needlessly
     #
     #
-    
+    #len(self.exploredGrid[0])
     def getUnexploredTile(self):
         for row in range(0,len(self.exploredGrid)):
-            for col in range(0,len(self.exploredGrid[0])):
-                if( not self.exploredGrid[row][col] ):
-                    return [row,col]
+            cols = len(self.exploredGrid[0])
+            for col in range(0,cols):
+                
+                if(row % 2 == 0):
+                    if( not self.exploredGrid[row][col] ):
+                        return [row,col]
+                else:
+                    if( not self.exploredGrid[row][cols - col - 1] ):
+                        #print(cols - col - 1)
+                        return [row, int (cols - col - 1) ]
+
+                
                 
         return None    
     
@@ -195,18 +237,24 @@ class solver:
         
         self.exploredGridActual[row][col].set_dirty(grid[row][col].has_dirt()) 
 
+        if(  col+1 < len(grid[0]) ):
+            self.exploredGridActual[row][col+1].set_dirty(grid[row][col+1].has_dirt()) 
+        if(  col-1 >= 0 ):
+            self.exploredGridActual[row][col-1].set_dirty(grid[row][col-1].has_dirt()) 
+        if( row-1 >= 0 ):
+            self.exploredGridActual[row-1][col].set_dirty(grid[row-1][col].has_dirt()) 
+        if( row+1 < len(grid) ):
+            self.exploredGridActual[row+1][col].set_dirty(grid[row+1][col].has_dirt()) 
+                
+
         if( grid[row][col].has_right_border() and col+1 < len(grid[0]) ):
             self.exploredGridActual[row][col+1].set_left_border()
-            self.exploredGridActual[row][col+1].set_dirty(grid[row][col+1].has_dirt()) 
         if( grid[row][col].has_left_border() and col-1 >= 0 ):
             self.exploredGridActual[row][col-1].set_right_border()
-            self.exploredGridActual[row][col-1].set_dirty(grid[row][col-1].has_dirt()) 
         if( grid[row][col].has_up_border() and row-1 >= 0 ):
             self.exploredGridActual[row-1][col].set_down_border()
-            self.exploredGridActual[row-1][col].set_dirty(grid[row-1][col].has_dirt()) 
         if( grid[row][col].has_down_border() and row+1 < len(grid) ):
             self.exploredGridActual[row+1][col].set_up_border()
-            self.exploredGridActual[row+1][col].set_dirty(grid[row+1][col].has_dirt()) 
                 
         
         
@@ -216,7 +264,7 @@ class solver:
         
         self.actualMovedPath = []
 
-        #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+        self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
         
         for  idx in range(0,len(path)) :
             if(path[idx] == 'U'):
