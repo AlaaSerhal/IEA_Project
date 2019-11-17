@@ -20,14 +20,18 @@ class dirt:
         else:
             self.entrance = [self.room.get_rows()-1, random.randint(0, self.room.get_cols()-1)]
 
+        print("Open window at: ", self.entrance)
         for row in range(self.room.get_rows()):
             for col in range(self.room.get_cols()):
                 dist = self.calculate_distance(self.entrance, [row,col])
-                proba = int(max(row,col)-dist)
+                # print("distance: ", dist)
+                proba = int(max(self.room.get_rows(),self.room.get_cols())-dist)
+                if(proba == 0 or proba == -1):
+                    proba = 1
+                # print("proba: ", proba)
                 x = [[row, col]]*proba
+                # print("adding ", x, " to array")
                 self.tile_dirt.extend(x)
-
-
         i = 0
         count = 0
         while(i < initial_number and count < 10):
