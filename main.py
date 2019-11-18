@@ -11,11 +11,15 @@ import copy
 
 def main():
     rows, cols = 15, 15
-    while(rows >= 15 or cols >= 15 or rows==0 or cols==0):
+    borders = 0
+    dirty_tiles=0
+    while(rows >= 15 or cols >= 15 or rows==0 or cols==0 or borders==0 or dirty_tiles==0):
         try:
             layout = [  [sg.Text('Necessary Inputs')],
             [sg.Text('Please enter number of rows as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
+            [sg.Text('Please enter number of dirty tiles:'), sg.InputText()],
+            [sg.Text('Please enter number of borders:'), sg.InputText()],
             [sg.Frame(layout=[
             [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
             [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
@@ -25,12 +29,14 @@ def main():
             [sg.Submit()]]
             window = sg.Window('Vacuum Cleaner Agent', layout)
             event, values = window.Read()
-            case1=values[2]
-            case2=values[3]
-            case3=values[4]
-            case4=values[5]
+            case1=values[4]
+            case2=values[5]
+            case3=values[6]
+            case4=values[7]
             rows=int(values[0])
             cols=int(values[1])
+            dirty_tiles= int(values[2])
+            borders=int(values[3])
             if event in ('Submit'):
                 print('Borders are placed randomly')
             window.Close()
@@ -46,10 +52,10 @@ def main():
     clock = pygame.time.Clock()
     r = room(CELL_SIZE, rows, cols, window)
     r.draw_grid()
-    r.draw_borders()
+    r.draw_borders(borders)
 
     v = vacuum(r, window)
-    d = dirt(r, window, 4)
+    d = dirt(r, window, dirty_tiles)
 
     pos = None
     mySolver = solver(r.get_array())
