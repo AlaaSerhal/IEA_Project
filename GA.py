@@ -54,7 +54,7 @@ class GA:
     
     def updateMatrixData(self,row,col, foundDirt):
         
-        print("matric data")
+        print("matrix data")
         print(self.matrixData[row][col])
 
         visits = int (self.matrixData[row][col][0] ) + 1
@@ -99,6 +99,7 @@ class GA:
 
             for i in keysDesc :
                 for j in dictionary[i]:
+                    print("here")
                     print ((i, j), end =" ") 
                     if(indx > 4):
                         break

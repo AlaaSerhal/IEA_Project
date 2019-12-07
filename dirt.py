@@ -44,6 +44,8 @@ class dirt:
             else:  # set dirt
                 self.room.set_dirt(row, col)
                 i += 1
+        
+        random.shuffle(x)
 
     def calculate_distance(self, pos1, pos2):  # calculate distance between 2 cells
         if(pos1[0] == pos2[0]):

@@ -66,8 +66,36 @@ def main():
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
         while run:
-            pygame.time.delay(200)
+            pygame.time.delay(100)
             clock.tick(10)
+
+            for event in pygame.event.get():
+                #gameover
+                if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    window.fill((0,0,0))
+                    font = pygame.font.Font('freesansbold.ttf', 20)
+                    text_surface = font.render("Game Over", True, (150,150,150))
+                    text_rect = text_surface.get_rect()
+                    text_rect.center = (window.get_width()//2, window.get_height()//2)
+                    window.blit(text_surface, text_rect)
+                    pygame.display.update()
+                    v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.time.delay(2000)
+                    run = False
+                    #arrows as input
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        v.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        v.move_right()
+                    if event.key == pygame.K_UP:
+                        v.move_up()
+                    if event.key == pygame.K_DOWN:
+                        v.move_down()
+                    #if event.key == pygame.K_SPACE:
+                    #    pygame.time.delay(5000)
+
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -80,8 +108,36 @@ def main():
             if(count == 4):
                 d.probabilistic_dirt(1)
                 count = 0
-            pygame.time.delay(200)
+            pygame.time.delay(100)
             clock.tick(10)
+
+            for event in pygame.event.get():
+                #gameover
+                if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    window.fill((0,0,0))
+                    font = pygame.font.Font('freesansbold.ttf', 20)
+                    text_surface = font.render("Game Over", True, (150,150,150))
+                    text_rect = text_surface.get_rect()
+                    text_rect.center = (window.get_width()//2, window.get_height()//2)
+                    window.blit(text_surface, text_rect)
+                    pygame.display.update()
+                    v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.time.delay(2000)
+                    run = False
+                    #arrows as input
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        v.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        v.move_right()
+                    if event.key == pygame.K_UP:
+                        v.move_up()
+                    if event.key == pygame.K_DOWN:
+                        v.move_down()
+                    #if event.key == pygame.K_SPACE:
+                    #    pygame.time.delay(5000)
+
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -110,8 +166,37 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(50)
+            pygame.time.delay(100)
             clock.tick(10)
+            
+            for event in pygame.event.get():
+                #gameover
+                if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    window.fill((0,0,0))
+                    font = pygame.font.Font('freesansbold.ttf', 20)
+                    text_surface = font.render("Game Over", True, (150,150,150))
+                    text_rect = text_surface.get_rect()
+                    text_rect.center = (window.get_width()//2, window.get_height()//2)
+                    window.blit(text_surface, text_rect)
+                    pygame.display.update()
+                    v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.time.delay(2000)
+                    run = False
+                    #arrows as input
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        v.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        v.move_right()
+                    if event.key == pygame.K_UP:
+                        v.move_up()
+                    if event.key == pygame.K_DOWN:
+                        v.move_down()
+                    #if event.key == pygame.K_SPACE:
+                    #    pygame.time.delay(5000)
+
+
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -151,6 +236,7 @@ def main():
 
         path = []
 
+        count = 0
 
         while run:
 
@@ -163,8 +249,37 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(50)
+            pygame.time.delay(100)
             clock.tick(10)
+            
+            for event in pygame.event.get():
+                #gameover
+                if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    window.fill((0,0,0))
+                    font = pygame.font.Font('freesansbold.ttf', 20)
+                    text_surface = font.render("Game Over", True, (150,150,150))
+                    text_rect = text_surface.get_rect()
+                    text_rect.center = (window.get_width()//2, window.get_height()//2)
+                    window.blit(text_surface, text_rect)
+                    pygame.display.update()
+                    v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.time.delay(2000)
+                    run = False
+                    #arrows as input
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        v.move_left()
+                    if event.key == pygame.K_RIGHT:
+                        v.move_right()
+                    if event.key == pygame.K_UP:
+                        v.move_up()
+                    if event.key == pygame.K_DOWN:
+                        v.move_down()
+                    #if event.key == pygame.K_SPACE:
+                    #    pygame.time.delay(5000)
+
+
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False

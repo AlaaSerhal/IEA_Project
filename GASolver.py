@@ -17,7 +17,7 @@ class GASolver:
             #explore it then !!!!
             
             ga.updateMatrixData(pos[0],pos[1],True)
-
+huvyc
         ga.obtainFitnessFromData()
 
         #explore something outside pool low or no
