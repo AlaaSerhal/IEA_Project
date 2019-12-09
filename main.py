@@ -3,18 +3,22 @@ from vacuum import vacuum
 import PySimpleGUI as sg
 from room import room
 from dirt import dirt
-
+from datetime import datetime
+import globals
 
 from solver import solver
 import copy
 
 
 def main():
+    khalasYaMario = False
+    khalasYaSamer=False
     rows, cols = 15, 15
     borders = 0
     dirty_tiles=0
     while(rows >= 15 or cols >= 15 or rows==0 or cols==0 or borders==0 or dirty_tiles==0):
         try:
+            
             layout = [  [sg.Text('Necessary Inputs')],
             [sg.Text('Please enter number of rows as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
@@ -62,16 +66,22 @@ def main():
 
     tempLastLoc = None
     pos2 = None
+    globals.globals.start_duration = datetime.now().timestamp()
+
 
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
         while run:
             pygame.time.delay(100)
             clock.tick(10)
-
             for event in pygame.event.get():
+
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    globals.globals.end_duration= datetime.now().timestamp()
+                    
+                    khalasYaMario = True
+                    r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
                     text_surface = font.render("Game Over", True, (150,150,150))
@@ -80,7 +90,14 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.time.delay(2000)
+                    v.move_left()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -100,7 +117,9 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            v.move_to_closest_dirt()
+
+            if(not khalasYaMario):
+                v.move_to_closest_dirt()
 
     elif(case2):  # fully observable and dirt keeps getting added
         count = 0
@@ -112,8 +131,12 @@ def main():
             clock.tick(10)
 
             for event in pygame.event.get():
+                
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    globals.globals.end_duration= datetime.now().timestamp()
+                    khalasYaMario = True
+                    r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
                     text_surface = font.render("Game Over", True, (150,150,150))
@@ -122,7 +145,14 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.time.delay(2000)
+                    v.move_left()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    pygame.time.delay(500)
+                    v.move_right()
+                    
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -142,8 +172,8 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-
-            v.move_to_closest_dirt()
+            if(not khalasYaMario):
+                v.move_to_closest_dirt()
             count += 1
 
     #Partially visible in HERE
@@ -172,6 +202,10 @@ def main():
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    khalasYaSamer=True
+                    globals.globals.end_duration= datetime.now().timestamp()
+                    r.clear_room()
+                    path=["R","R","R","R"]
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
                     text_surface = font.render("Game Over", True, (150,150,150))
@@ -180,7 +214,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.time.delay(2000)
+                    
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -214,8 +248,8 @@ def main():
 
             print("pos 2")
             print(pos2)
-
-            path = mySolver.getLastActualUsedPath()
+            if(not khalasYaSamer):
+                path = mySolver.getLastActualUsedPath()
 
             #END OF EXPLORATION
 
@@ -255,6 +289,10 @@ def main():
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
+                    khalasYaSamer=True
+                    globals.globals.end_duration= datetime.now().timestamp()
+                    r.clear_room()
+                    path=["R","R","R","R"]
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
                     text_surface = font.render("Game Over", True, (150,150,150))
@@ -262,8 +300,8 @@ def main():
                     text_rect.center = (window.get_width()//2, window.get_height()//2)
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
-                    v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.time.delay(2000)
+                    v.set_position((rows//2)+1,(cols//2)-3)
+                    
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -294,8 +332,8 @@ def main():
                 print('target pos: ' + str(pos) )
 
             if (not pos[0] == -1):
-
-                path = mySolver.getLastActualUsedPath()
+                if(not khalasYaSamer):
+                    path = mySolver.getLastActualUsedPath()
 
                 print('path: ' + str(path) )
 
@@ -320,8 +358,8 @@ def main():
 
                 print("pos 2")
                 print(pos2)
-
-                path = mySolver.getLastActualUsedPath()
+                if(not khalasYaSamer):
+                    path = mySolver.getLastActualUsedPath()
 
                 #path = []
 
@@ -345,3 +383,5 @@ def main():
     pygame.quit()
 
 main()
+
+    

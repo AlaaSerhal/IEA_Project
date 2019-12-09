@@ -137,3 +137,9 @@ class room:
         self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
         self.vacuum = [row, col]
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
+    def clear_room(self):
+        for row in range(len(self.grid)):
+            for col in range(len(self.grid[0])):
+                self.grid[row][col].set_borders(False,False,False,False)
+                self.grid[row][col].set_vacuum()
+                self.grid[row][col].clean()

@@ -1,3 +1,4 @@
+import globals
 class tile:  # class defines one tile
     def __init__(self, x_pos, y_pos):
         self.probability = 0
@@ -52,6 +53,8 @@ class tile:  # class defines one tile
 
     def set_dirty(self,hasDirt):
         self.dirt = hasDirt
+        if(not self.dirty()):
+            globals.globals.nb_added_dirt +=1
 
     def clean(self):
         if(self.vacuum and self.dirt):

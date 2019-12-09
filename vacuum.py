@@ -2,7 +2,7 @@ import pygame
 import operator
 import random
 from math import hypot
-
+import globals
 class vacuum:
     def __init__(self, room, window):
         self.img = pygame.image.load("vacuum.png")
@@ -24,8 +24,10 @@ class vacuum:
         left = int((col*cell_size)+2)
         top = int((row*cell_size)+2)
         pygame.draw.rect(self.window, (0,0,0),((old_col*cell_size)+1, (old_row*cell_size)+1, cell_size-2, cell_size-2), False)
+        globals.globals.nb_steps +=1
         if(self.room.get_array()[row][col].has_dirt()):
             self.room.clean_tile(row, col)
+            globals.globals.nb_clean_tiles +=1
             pygame.draw.rect(self.window, (0,0,0),((old_col*cell_size)+1, (old_row*cell_size)+1, cell_size-2, cell_size-2), False)
         self.window.blit(self.img, (left, top))
         pygame.display.update()
