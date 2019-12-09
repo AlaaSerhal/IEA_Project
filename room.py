@@ -9,6 +9,7 @@ class room:
         self.rows = rows
         self.cols = cols
         self.window = window
+        self.dirt_machine = [0, 0]
         self.vacuum = [rows//2, cols//2]  # vacuum starts in the middle
         self.grid = []
         self.dirt_img = pygame.image.load("dirt.png")
@@ -25,6 +26,7 @@ class room:
                 if(col == cols-1):
                     self.grid[row][col].set_right_border()
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
+        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].set_dirt_machine()
 
     def draw_grid(self):  # draw grid and outside borders
         x = 0
@@ -118,8 +120,14 @@ class room:
     def get_array(self):
         return self.grid
 
+    def dirt_machine_position(self):
+        return self.dirt_machine
+
     def vacuum_position(self):
         return self.vacuum
+
+    def get_dirt_machine_tile(self):
+        return self.grid[self.dirt_machine[0]][self.dirt_machine[1]]
 
     def get_vacuum_tile(self):
         return self.grid[self.vacuum[0]][self.vacuum[1]]
@@ -133,10 +141,16 @@ class room:
             self.dirt_list.remove(element)
         self.grid[row][col].clean()
 
+    def set_dirt_machine(self, row, col):
+        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].remove_dirt_machine()
+        self.dirt_machine = [row, col]
+        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].set_dirt_machine()
+
     def set_vacuum(self, row, col):  # sets vacuum in room
         self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
         self.vacuum = [row, col]
         self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
+
     def clear_room(self):
         for row in range(len(self.grid)):
             for col in range(len(self.grid[0])):

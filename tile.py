@@ -10,6 +10,13 @@ class tile:  # class defines one tile
         self.up_border = False
         self.x_pos = x_pos
         self.y_pos = y_pos
+        self.dirt_machine = None
+
+    def set_dirt_machine(self):
+        self.dirt_machine = True
+
+    def remove_dirt_machine(self):
+        self.dirt_machine = None
 
     def set_proba(self, proba):
         self.probability = proba
@@ -50,10 +57,12 @@ class tile:  # class defines one tile
 
     def dirty(self):
         self.dirt = True
+        if(not self.dirt):
+            globals.globals.nb_added_dirt +=1
 
     def set_dirty(self,hasDirt):
         self.dirt = hasDirt
-        if(not self.dirty()):
+        if(not self.dirt):
             globals.globals.nb_added_dirt +=1
 
     def clean(self):

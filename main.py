@@ -3,6 +3,7 @@ from vacuum import vacuum
 import PySimpleGUI as sg
 from room import room
 from dirt import dirt
+from dirt_machine import dirt_machine
 from datetime import datetime
 import globals
 
@@ -18,7 +19,7 @@ def main():
     dirty_tiles=0
     while(rows >= 15 or cols >= 15 or rows==0 or cols==0 or borders==0 or dirty_tiles==0):
         try:
-            
+
             layout = [  [sg.Text('Necessary Inputs')],
             [sg.Text('Please enter number of rows as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
@@ -59,6 +60,7 @@ def main():
     r.draw_borders(borders)
 
     v = vacuum(r, window)
+    machine = dirt_machine(r, window)
     d = dirt(r, window, dirty_tiles)
 
     pos = None
@@ -79,7 +81,7 @@ def main():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
-                    
+
                     khalasYaMario = True
                     r.clear_room()
                     window.fill((0,0,0))
@@ -97,7 +99,7 @@ def main():
                     v.move_right()
                     pygame.time.delay(500)
                     v.move_right()
-                    
+
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -120,6 +122,7 @@ def main():
 
             if(not khalasYaMario):
                 v.move_to_closest_dirt()
+                machine.move_from_closest_dirt()
 
     elif(case2):  # fully observable and dirt keeps getting added
         count = 0
@@ -131,7 +134,7 @@ def main():
             clock.tick(10)
 
             for event in pygame.event.get():
-                
+
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
@@ -152,7 +155,7 @@ def main():
                     v.move_right()
                     pygame.time.delay(500)
                     v.move_right()
-                    
+
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -174,6 +177,7 @@ def main():
                     run = False
             if(not khalasYaMario):
                 v.move_to_closest_dirt()
+                machine.move_from_closest_dirt()
             count += 1
 
     #Partially visible in HERE
@@ -186,7 +190,7 @@ def main():
         mySolver.expoloreAllBorders()
 
         while run:
-            
+
             if(count >= 3):
                 d.probabilistic_dirt(1)
                 count = 0
@@ -198,7 +202,7 @@ def main():
 
             pygame.time.delay(100)
             clock.tick(10)
-            
+
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
@@ -214,7 +218,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    
+
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -230,7 +234,7 @@ def main():
                     #    pygame.time.delay(5000)
 
 
-            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -285,7 +289,7 @@ def main():
 
             pygame.time.delay(100)
             clock.tick(10)
-            
+
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
@@ -301,7 +305,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-3)
-                    
+
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -317,7 +321,7 @@ def main():
                     #    pygame.time.delay(5000)
 
 
-            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -383,5 +387,3 @@ def main():
     pygame.quit()
 
 main()
-
-    
