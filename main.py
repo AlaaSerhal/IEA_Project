@@ -12,8 +12,8 @@ import copy
 
 
 def main():
-    khalasYaMario = False
-    khalasYaSamer=False
+    game_over = False
+    game__over=False
     rows, cols = 15, 15
     borders = 0
     dirty_tiles=0
@@ -81,8 +81,14 @@ def main():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
-
-                    khalasYaMario = True
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    event1, values1 = window1.Read()
+                    game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
@@ -120,7 +126,7 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
 
-            if(not khalasYaMario):
+            if(not game_over):
                 v.move_to_closest_dirt()
                 machine.move_from_closest_dirt()
 
@@ -138,7 +144,14 @@ def main():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
-                    khalasYaMario = True
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    event1, values1 = window1.Read()
+                    game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
@@ -175,7 +188,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            if(not khalasYaMario):
+            if(not game_over):
                 v.move_to_closest_dirt()
                 machine.move_from_closest_dirt()
             count += 1
@@ -206,8 +219,15 @@ def main():
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
-                    khalasYaSamer=True
+                    game__over=True
                     globals.globals.end_duration= datetime.now().timestamp()
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    event1, values1 = window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -252,7 +272,7 @@ def main():
 
             print("pos 2")
             print(pos2)
-            if(not khalasYaSamer):
+            if(not game__over):
                 path = mySolver.getLastActualUsedPath()
 
             #END OF EXPLORATION
@@ -293,8 +313,15 @@ def main():
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
-                    khalasYaSamer=True
+                    game__over=True
                     globals.globals.end_duration= datetime.now().timestamp()
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    event1, values1 = window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -336,7 +363,7 @@ def main():
                 print('target pos: ' + str(pos) )
 
             if (not pos[0] == -1):
-                if(not khalasYaSamer):
+                if(not game__over):
                     path = mySolver.getLastActualUsedPath()
 
                 print('path: ' + str(path) )
@@ -362,7 +389,7 @@ def main():
 
                 print("pos 2")
                 print(pos2)
-                if(not khalasYaSamer):
+                if(not game__over):
                     path = mySolver.getLastActualUsedPath()
 
                 #path = []
