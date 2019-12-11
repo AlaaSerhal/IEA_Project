@@ -25,6 +25,7 @@ def main():
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of dirty tiles:'), sg.InputText()],
             [sg.Text('Please enter number of borders:'), sg.InputText()],
+            [sg.Text('Delay:'),sg.Slider(range=(1000,100),default_value=1,size=(20,15),orientation='horizontal')],
             [sg.Frame(layout=[
             [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
             [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
@@ -34,14 +35,16 @@ def main():
             [sg.Submit()]]
             window = sg.Window('Vacuum Cleaner Agent', layout)
             event, values = window.Read()
-            case1=values[4]
-            case2=values[5]
-            case3=values[6]
-            case4=values[7]
+            case1=values[5]
+            case2=values[6]
+            case3=values[7]
+            case4=values[8]
             rows=int(values[0])
             cols=int(values[1])
             dirty_tiles= int(values[2])
             borders=int(values[3])
+            globals.globals.speed=int(values[4])
+            print(int(values[4]))
             if event in ('Submit'):
                 print('Borders are placed randomly')
             window.Close()
@@ -91,7 +94,7 @@ def main():
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
                     [sg.Button('Exit')]]  
                     window1 = sg.Window('Measures', layout2)
-                    event1, values1 = window1.Read()
+                    window1.Read()
                     game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
@@ -123,8 +126,8 @@ def main():
                         v.move_up()
                     if event.key == pygame.K_DOWN:
                         v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
@@ -156,7 +159,7 @@ def main():
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
                     [sg.Button('Exit')]]  
                     window1 = sg.Window('Measures', layout2)
-                    event1, values1 = window1.Read()
+                    window1.Read()
                     game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
@@ -180,16 +183,8 @@ def main():
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
@@ -235,7 +230,7 @@ def main():
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
                     [sg.Button('Exit')]]  
                     window1 = sg.Window('Measures', layout2)
-                    event1, values1 = window1.Read()
+                    window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -252,16 +247,8 @@ def main():
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
@@ -331,7 +318,7 @@ def main():
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
                     [sg.Button('Exit')]]  
                     window1 = sg.Window('Measures', layout2)
-                    event1, values1 = window1.Read()
+                    window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -348,16 +335,8 @@ def main():
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                       pygame.time.delay(5000)
 
 
 
