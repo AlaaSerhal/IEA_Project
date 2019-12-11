@@ -49,8 +49,10 @@ def main():
             print("No valid integer! Please try again ...")
     CELL_SIZE = 40
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
+    
+    
     pygame.init()
-
+     
     window = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Vacuum Cleaner Agent")
     run = True
@@ -68,13 +70,15 @@ def main():
 
     tempLastLoc = None
     pos2 = None
+    
     globals.globals.start_duration = datetime.now().timestamp()
 
 
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
         while run:
-            pygame.time.delay(100)
+            
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
             for event in pygame.event.get():
 
@@ -98,6 +102,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
                     v.move_right()
@@ -136,7 +142,7 @@ def main():
             if(count == 4):
                 d.probabilistic_dirt(1)
                 count = 0
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -161,6 +167,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
                     v.move_right()
@@ -213,7 +221,7 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -238,6 +246,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
 
                     run = False
                     #arrows as input
@@ -286,7 +296,7 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
-                pygame.time.delay(100)
+                pygame.time.delay(globals.globals.speed)
 
             pygame.display.update()
 
@@ -307,7 +317,7 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -332,6 +342,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-3)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
 
                     run = False
                     #arrows as input
@@ -405,12 +417,12 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
-                pygame.time.delay(100)
+                pygame.time.delay(globals.globals.speed)
 
             pygame.display.update()
 
 
 
     pygame.quit()
-
 main()
+

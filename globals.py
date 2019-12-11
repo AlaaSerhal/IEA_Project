@@ -7,3 +7,4 @@ class globals:
     nb_added_dirt= 0
     average_lifespan_dirt=0
     tile_color= (0,0,0)
+    speed=100
