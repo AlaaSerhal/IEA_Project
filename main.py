@@ -12,8 +12,8 @@ import copy
 
 
 def main():
-    khalasYaMario = False
-    khalasYaSamer=False
+    game_over = False
+    game__over=False
     rows, cols = 15, 15
     borders = 0
     dirty_tiles=0
@@ -25,6 +25,7 @@ def main():
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of dirty tiles:'), sg.InputText()],
             [sg.Text('Please enter number of borders:'), sg.InputText()],
+            [sg.Text('Speed:'),sg.Slider(range=(1000,100),default_value=1000,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Frame(layout=[
             [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
             [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
@@ -34,14 +35,16 @@ def main():
             [sg.Submit()]]
             window = sg.Window('Vacuum Cleaner Agent', layout)
             event, values = window.Read()
-            case1=values[4]
-            case2=values[5]
-            case3=values[6]
-            case4=values[7]
+            case1=values[5]
+            case2=values[6]
+            case3=values[7]
+            case4=values[8]
             rows=int(values[0])
             cols=int(values[1])
             dirty_tiles= int(values[2])
             borders=int(values[3])
+            globals.globals.speed=int(values[4])
+            print(int(values[4]))
             if event in ('Submit'):
                 print('Borders are placed randomly')
             window.Close()
@@ -49,8 +52,10 @@ def main():
             print("No valid integer! Please try again ...")
     CELL_SIZE = 40
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
+    
+    
     pygame.init()
-
+     
     window = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Vacuum Cleaner Agent")
     run = True
@@ -68,21 +73,29 @@ def main():
 
     tempLastLoc = None
     pos2 = None
+    
     globals.globals.start_duration = datetime.now().timestamp()
 
 
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
         while run:
-            pygame.time.delay(100)
+            
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
             for event in pygame.event.get():
 
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
-
-                    khalasYaMario = True
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    window1.Read()
+                    game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
@@ -92,6 +105,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
                     v.move_right()
@@ -111,8 +126,8 @@ def main():
                         v.move_up()
                     if event.key == pygame.K_DOWN:
                         v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
@@ -120,7 +135,7 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
 
-            if(not khalasYaMario):
+            if(not game_over):
                 v.move_to_closest_dirt()
                 machine.move_from_closest_dirt()
 
@@ -130,7 +145,7 @@ def main():
             if(count == 4):
                 d.probabilistic_dirt(1)
                 count = 0
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -138,7 +153,14 @@ def main():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
                     globals.globals.end_duration= datetime.now().timestamp()
-                    khalasYaMario = True
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    window1.Read()
+                    game_over = True
                     r.clear_room()
                     window.fill((0,0,0))
                     font = pygame.font.Font('freesansbold.ttf', 20)
@@ -148,6 +170,8 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
                     v.move_right()
@@ -159,23 +183,15 @@ def main():
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            if(not khalasYaMario):
+            if(not game_over):
                 v.move_to_closest_dirt()
                 machine.move_from_closest_dirt()
             count += 1
@@ -200,14 +216,21 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
-                    khalasYaSamer=True
+                    game__over=True
                     globals.globals.end_duration= datetime.now().timestamp()
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -218,20 +241,14 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
 
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                        pygame.time.delay(5000)
 
 
 
@@ -252,7 +269,7 @@ def main():
 
             print("pos 2")
             print(pos2)
-            if(not khalasYaSamer):
+            if(not game__over):
                 path = mySolver.getLastActualUsedPath()
 
             #END OF EXPLORATION
@@ -266,7 +283,7 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
-                pygame.time.delay(100)
+                pygame.time.delay(globals.globals.speed)
 
             pygame.display.update()
 
@@ -287,14 +304,21 @@ def main():
             count += 1
             #////////////////////////////////////
 
-            pygame.time.delay(100)
+            pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
                 #gameover
                 if (event.type == pygame.QUIT or ((event.type == pygame.KEYDOWN or event.type == pygame.KEYUP) and (event.key == pygame.K_ESCAPE))):
-                    khalasYaSamer=True
+                    game__over=True
                     globals.globals.end_duration= datetime.now().timestamp()
+                    layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
+                    [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
+                    [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
+                    [sg.Button('Exit')]]  
+                    window1 = sg.Window('Measures', layout2)
+                    window1.Read()
                     r.clear_room()
                     path=["R","R","R","R"]
                     window.fill((0,0,0))
@@ -305,20 +329,14 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-3)
+                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.play(2)
 
                     run = False
                     #arrows as input
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        v.move_left()
-                    if event.key == pygame.K_RIGHT:
-                        v.move_right()
-                    if event.key == pygame.K_UP:
-                        v.move_up()
-                    if event.key == pygame.K_DOWN:
-                        v.move_down()
-                    #if event.key == pygame.K_SPACE:
-                    #    pygame.time.delay(5000)
+                    if event.key == pygame.K_SPACE:
+                       pygame.time.delay(5000)
 
 
 
@@ -336,7 +354,7 @@ def main():
                 print('target pos: ' + str(pos) )
 
             if (not pos[0] == -1):
-                if(not khalasYaSamer):
+                if(not game__over):
                     path = mySolver.getLastActualUsedPath()
 
                 print('path: ' + str(path) )
@@ -362,7 +380,7 @@ def main():
 
                 print("pos 2")
                 print(pos2)
-                if(not khalasYaSamer):
+                if(not game__over):
                     path = mySolver.getLastActualUsedPath()
 
                 #path = []
@@ -378,12 +396,12 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
-                pygame.time.delay(100)
+                pygame.time.delay(globals.globals.speed)
 
             pygame.display.update()
 
 
 
     pygame.quit()
-
 main()
+
