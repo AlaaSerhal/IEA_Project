@@ -59,10 +59,10 @@ def main():
             print("No valid integer! Please try again ...")
     CELL_SIZE = 40
     window_size = [cols * CELL_SIZE, rows * CELL_SIZE]
-    
-    
+
+
     pygame.init()
-     
+
     window = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Vacuum Cleaner Agent")
     run = True
@@ -70,9 +70,20 @@ def main():
     r = room(CELL_SIZE, rows, cols, window)
     r.draw_grid()
     r.draw_borders(borders)
+    vacuums = []
+    dirt_machines = []
 
-    v = vacuum(r, window)
-    machine = dirt_machine(r, window)
+    for x in range(globals.globals.cleaning_agents):
+        vacuums.append(vacuum(r, window, x))
+        print("creating vacuum with ID: ",  x)
+
+    if(globals.globals.dirt_agents > 0):
+        for x in range(globals.globals.dirt_agents):
+            dirt_machines.append(dirt_machine(r, window, x))
+            print("creating dirt machine with ID: ", x)
+    else:
+        pass
+    # print(dirt_machines)
     d = dirt(r, window, dirty_tiles)
 
     pos = None
@@ -80,14 +91,14 @@ def main():
 
     tempLastLoc = None
     pos2 = None
-    
+
     globals.globals.start_duration = datetime.now().timestamp()
 
 
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
         while run:
-            
+
             pygame.time.delay(globals.globals.speed)
             clock.tick(10)
             for event in pygame.event.get():
@@ -98,8 +109,8 @@ def main():
                     layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
-                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
-                    [sg.Button('Exit')]]  
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
                     game_over = True
@@ -111,16 +122,16 @@ def main():
                     text_rect.center = (window.get_width()//2, window.get_height()//2)
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
-                    v.set_position((rows//2)+1,(cols//2)-1)
+                    vacuums[0].set_position((rows//2)+1,(cols//2)-1)
                     pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
-                    v.move_left()
+                    vacuums[0].move_left()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
 
                     run = False
                     #arrows as input
@@ -143,8 +154,14 @@ def main():
                     run = False
 
             if(not game_over):
-                v.move_to_closest_dirt()
-                machine.move_from_closest_dirt()
+                for x in vacuums:
+                    x.move_to_closest_dirt()
+                if(globals.globals.dirt_agents != 0):
+                    for x in dirt_machines:
+                        print("moving: ", x)
+                        x.move_from_closest_dirt()
+                else:
+                    pass
 
     elif(case2):  # fully observable and dirt keeps getting added
         count = 0
@@ -163,8 +180,8 @@ def main():
                     layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
-                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
-                    [sg.Button('Exit')]]  
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
                     game_over = True
@@ -176,16 +193,16 @@ def main():
                     text_rect.center = (window.get_width()//2, window.get_height()//2)
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
-                    v.set_position((rows//2)+1,(cols//2)-1)
+                    vacuums[0].set_position((rows//2)+1,(cols//2)-1)
                     pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
-                    v.move_left()
+                    vacuums[0].move_left()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
                     pygame.time.delay(500)
-                    v.move_right()
+                    vacuums[0].move_right()
 
                     run = False
                     #arrows as input
@@ -199,8 +216,13 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
             if(not game_over):
-                v.move_to_closest_dirt()
-                machine.move_from_closest_dirt()
+                for x in vacuums:
+                    x.move_to_closest_dirt()
+                if(globals.globals.dirt_agents != 0):
+                    for x in dirt_machines:
+                        x.move_from_closest_dirt()
+                else:
+                    pass
             count += 1
 
     #Partially visible in HERE
@@ -234,8 +256,8 @@ def main():
                     layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
-                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
-                    [sg.Button('Exit')]]  
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
                     r.clear_room()
@@ -275,7 +297,7 @@ def main():
 
             print("pos 2")
             print(pos2)
-            
+
             if(not game__over):
                 path = mySolver.getLastActualUsedPath()
                 #machine.move_from_closest_dirt()
@@ -309,7 +331,7 @@ def main():
                 pygame.time.delay(globals.globals.speed)
 
             #pos2 = r.vacuum_position();
-            
+
             pygame.display.update()
 
     elif(case4):
@@ -340,8 +362,8 @@ def main():
                     layout2 = [[sg.Text('Duration: ' + str(round(globals.globals.end_duration-globals.globals.start_duration,3)))],
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
-                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],      
-                    [sg.Button('Exit')]]  
+                    [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
                     r.clear_room()
@@ -373,10 +395,10 @@ def main():
             #CASE 4
 
             if (pos is None or not pos[0] == -1):
-                
+
                 if(not pos is None):
                     tempLastLoc = copy.deepcopy( pos )
-                
+
 
                 pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
                 print('target pos: ' + str(pos) )
@@ -396,7 +418,7 @@ def main():
             #    print('target pos: ' + str(pos) )
 
             #if (not pos[0] == -1):
-            #    
+            #
             #    if(not game__over):
             #        path = mySolver.getLastActualUsedPath()
 
@@ -404,7 +426,7 @@ def main():
 
             #    print(r.vacuum_position() )
 
-                
+
 
             #    tempLastLoc = copy.deepcopy( pos )
 
@@ -419,7 +441,7 @@ def main():
                 if(pos2 is None):
                     pos2 = tempLastLoc
 
-                
+
 
                 pos2 = mySolver.dirtPathIterator( copy.deepcopy( r.vacuum_position() ) )
 
@@ -456,26 +478,25 @@ def main():
 
                 if(not game__over):
                     machine.move_from_closest_dirt()
-                
+
                 pygame.time.delay(globals.globals.speed)
 
 
             path.clear();
 
-            #ADDED -- shouldn't be a problem 
+            #ADDED -- shouldn't be a problem
             #if(not pos[0] == -1):
             #    pos = r.vacuum_position();
             #else:
-                #ADDED -- shouldn't be a problem 
+                #ADDED -- shouldn't be a problem
             #    pos2 = r.vacuum_position();
-            
-            
-           
-            
+
+
+
+
             pygame.display.update()
 
 
 
     pygame.quit()
 main()
-

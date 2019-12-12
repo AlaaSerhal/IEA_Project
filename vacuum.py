@@ -4,7 +4,7 @@ import random
 from math import hypot
 import globals
 class vacuum:
-    def __init__(self, room, window):
+    def __init__(self, room, window, id=0):
         self.img = pygame.image.load("vacuum.png")
         self.room = room
         self.window = window
@@ -14,13 +14,14 @@ class vacuum:
         self.prev_prev_prev_move = None
         self.prev_prev_prev_prev_move = None
         self.loop = False
+        self.id = id
 
     def set_position(self, row, col):  # sets position of vaccum and moves the image and deletes the old image
-        old = self.room.vacuum_position()
+        old = self.room.vacuum_position(self.id)
         old_col = old[1]
         old_row = old[0]
         cell_size = self.room.get_cell_size()
-        self.room.set_vacuum(row, col)
+        self.room.set_vacuum(self.id, row, col)
         left = int((col*cell_size)+2)
         top = int((row*cell_size)+2)
         pygame.draw.rect(self.window, (0,0,0),((old_col*cell_size)+1, (old_row*cell_size)+1, cell_size-2, cell_size-2), False)
@@ -34,7 +35,7 @@ class vacuum:
 
     def move_up(self):
         grid = self.room.get_array()
-        position = self.room.vacuum_position()
+        position = self.room.vacuum_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_up_border() and row > 0):
@@ -49,7 +50,7 @@ class vacuum:
 
     def move_down(self):
         grid = self.room.get_array()
-        position = self.room.vacuum_position()
+        position = self.room.vacuum_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
@@ -64,7 +65,7 @@ class vacuum:
 
     def move_right(self):
         grid = self.room.get_array()
-        position = self.room.vacuum_position()
+        position = self.room.vacuum_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
@@ -79,7 +80,7 @@ class vacuum:
 
     def move_left(self):
         grid = self.room.get_array()
-        position = self.room.vacuum_position()
+        position = self.room.vacuum_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_left_border() and col > 0):
@@ -112,9 +113,9 @@ class vacuum:
 
     def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
-        pos = self.room.vacuum_position()
+        pos = self.room.vacuum_position(self.id)
         grid = self.room.get_array()
-        tile = self.room.get_vacuum_tile()
+        tile = self.room.get_vacuum_tile(self.id)
         if(not tile.has_up_border()):
             if(not grid[pos[0]-1][pos[1]].is_occupied()):
                 moves.append("U")
@@ -166,14 +167,14 @@ class vacuum:
 
 
     def move_to_closest_dirt(self):  # take one step closer to closest dirt
-        
+
         next_pos = None
-        
+
         distances = []
         valid_moves = self.get_valid_moves()
         min_distance = 10000
         closest_dirt = None
-        current_position = self.room.vacuum_position()
+        current_position = self.room.vacuum_position(self.id)
         dirt_list = self.room.get_dirt_list()
         if(len(dirt_list) != 0):  # check if there is any dirt left on the map
             for dirt in dirt_list:  # calculate distance between vacuum and every dirt
@@ -235,7 +236,7 @@ class vacuum:
             # if vacuum might get stuck, remove best move and go with safe sub optimal move
             if(case_a or case_b or case_c or case_d and len(valid_moves) > 1 and best_move in valid_moves):
                 valid_moves.remove(best_move)
-                print("trying to escape")
+                # print("trying to escape")
 
             min_new_dist = 10000
             second_min = 10000
@@ -281,7 +282,7 @@ class vacuum:
 
             # check if vacuum is going in a loop
             if(x == self.prev_prev_prev_prev_move and self.prev_move == -self.prev_prev_prev_move and self.prev_prev_move == -self.prev_prev_prev_prev_move and not self.loop):
-                print("making second best move")
+                # print("making second best move")
                 best_move = second_best  # if in a loop we go with the second best move to exit loop
 
             # move one step if the right direction

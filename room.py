@@ -1,6 +1,7 @@
 import pygame as pygame
 import random
 from tile import tile
+import globals
 
 class room:
     def __init__(self, cell_size, rows, cols, window):
@@ -9,8 +10,8 @@ class room:
         self.rows = rows
         self.cols = cols
         self.window = window
-        self.dirt_machine = [0, 0]
-        self.vacuum = [rows//2, cols//2]  # vacuum starts in the middle
+        self.dirt_machine = []
+        self.vacuum = []
         self.grid = []
         self.dirt_img = pygame.image.load("dirt.png")
         for row in range(rows):  # create array
@@ -25,8 +26,32 @@ class room:
                     self.grid[row][col].set_down_border()
                 if(col == cols-1):
                     self.grid[row][col].set_right_border()
-        self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
-        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].set_dirt_machine()
+        for x in range(globals.globals.cleaning_agents):
+            set = False
+            self.vacuum.append([])
+            while(not set):
+                row = random.randint(0, rows -1)
+                col = random.randint(0, cols -1)
+                if(not self.grid[row][col].is_occupied()):
+                    self.grid[row][col].set_vacuum()
+                    self.vacuum[x].extend([row, col])
+                    set = True
+                else:
+                    pass
+        for x in range(globals.globals.dirt_agents):
+            set = False
+            self.dirt_machine.append([])
+            while(not set):
+                row = random.randint(0, rows -1)
+                col = random.randint(0, cols -1)
+                if(not self.grid[row][col].is_occupied()):
+                    self.grid[row][col].set_dirt_machine()
+                    self.dirt_machine[x].extend([row, col])
+                    set = True
+                else:
+                    pass
+        print(self.vacuum)
+        print(self.dirt_machine)
 
     def draw_grid(self):  # draw grid and outside borders
         x = 0
@@ -120,17 +145,17 @@ class room:
     def get_array(self):
         return self.grid
 
-    def dirt_machine_position(self):
-        return self.dirt_machine
+    def dirt_machine_position(self, id):
+        return self.dirt_machine[id]
 
-    def vacuum_position(self):
-        return self.vacuum
+    def vacuum_position(self, id):
+        return self.vacuum[id]
 
-    def get_dirt_machine_tile(self):
-        return self.grid[self.dirt_machine[0]][self.dirt_machine[1]]
+    def get_dirt_machine_tile(self,id):
+        return self.grid[self.dirt_machine[id][0]][self.dirt_machine[id][1]]
 
-    def get_vacuum_tile(self):
-        return self.grid[self.vacuum[0]][self.vacuum[1]]
+    def get_vacuum_tile(self, id):
+        return self.grid[self.vacuum[id][0]][self.vacuum[id][1]]
 
     def get_dirt_list(self):
         return self.dirt_list
@@ -141,15 +166,15 @@ class room:
             self.dirt_list.remove(element)
         self.grid[row][col].clean()
 
-    def set_dirt_machine(self, row, col):
-        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].remove_dirt_machine()
-        self.dirt_machine = [row, col]
-        self.grid[self.dirt_machine[0]][self.dirt_machine[1]].set_dirt_machine()
+    def set_dirt_machine(self, id, row, col):
+        self.grid[self.dirt_machine[id][0]][self.dirt_machine[id][1]].remove_dirt_machine()
+        self.dirt_machine[id] = [row, col]
+        self.grid[self.dirt_machine[id][0]][self.dirt_machine[id][1]].set_dirt_machine()
 
-    def set_vacuum(self, row, col):  # sets vacuum in room
-        self.grid[self.vacuum[0]][self.vacuum[1]].remove_vacuum()
-        self.vacuum = [row, col]
-        self.grid[self.vacuum[0]][self.vacuum[1]].set_vacuum()
+    def set_vacuum(self, id, row, col):  # sets vacuum in room
+        self.grid[self.vacuum[id][0]][self.vacuum[id][1]].remove_vacuum()
+        self.vacuum[id] = [row, col]
+        self.grid[self.vacuum[id][0]][self.vacuum[id][1]].set_vacuum()
 
     def clear_room(self):
         for row in range(len(self.grid)):
