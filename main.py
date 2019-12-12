@@ -25,7 +25,7 @@ def main():
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of dirty tiles:'), sg.InputText()],
             [sg.Text('Please enter number of borders:'), sg.InputText()],
-            [sg.Text('Delay:'),sg.Slider(range=(1000,100),default_value=1,size=(20,15),orientation='horizontal')],
+            [sg.Text('Speed:'),sg.Slider(range=(1000,100),default_value=1000,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Frame(layout=[
             [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
             [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
