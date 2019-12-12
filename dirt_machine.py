@@ -1,6 +1,7 @@
 import pygame
 import operator
 import random
+import globals
 from math import hypot
 
 class dirt_machine:
@@ -320,7 +321,7 @@ class dirt_machine:
             self.random_move()
 
         self.count += 1
-        if(self.count%5 == 0):
+        if(self.count%globals.globals.period== 0):
             self.leave_dirt()
 
 
@@ -360,5 +361,5 @@ class dirt_machine:
         else:
             self.random_move()
         self.count += 1
-        if(self.count%5 == 0):
+        if(self.count%globals.globals.period == 0):
             self.leave_dirt()

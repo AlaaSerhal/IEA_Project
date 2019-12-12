@@ -8,3 +8,7 @@ class globals:
     average_lifespan_dirt=0
     tile_color= (0,0,0)
     speed=100
+    frequency=4
+    period=5
+    cleaning_agents=1
+    dirt_agents=0
