@@ -103,15 +103,20 @@ class dirt_machine:
 
     def get_moves_at_pos(self, pos):  # returns valid moves from a certain position in a grid
         moves = []
-        tile = self.room.get_array()[pos[0]][pos[1]]
+        grid = self.room.get_array()
+        tile = grid[pos[0]][pos[1]]
         if(not tile.has_up_border()):
-            moves.append("U")
+            if(not grid[pos[0]-1][pos[1]].is_occupied()):
+                moves.append("U")
         if(not tile.has_left_border()):
-            moves.append("L")
+            if(not grid[pos[0]][pos[1]-1].is_occupied()):
+                moves.append("L")
         if(not tile.has_down_border()):
-            moves.append("D")
+            if(not grid[pos[0]+1][pos[1]].is_occupied()):
+                moves.append("D")
         if(not tile.has_right_border()):
-            moves.append("R")
+            if(not grid[pos[0]][pos[1]+1].is_occupied()):
+                moves.append("R")
         return moves
 
     def calculate_distance(self, pos1, pos2):  # calculates straight line distance between 2 positions
@@ -151,20 +156,27 @@ class dirt_machine:
 
     def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
+        pos = self.room.dirt_machine_position()
+        grid = self.room.get_array()
         tile = self.room.get_dirt_machine_tile()
         if(not tile.has_up_border()):
-            moves.append("U")
+            if(not grid[pos[0]-1][pos[1]].is_occupied()):
+                moves.append("U")
         if(not tile.has_left_border()):
-            moves.append("L")
+            if(not grid[pos[0]][pos[1]-1].is_occupied()):
+                moves.append("L")
         if(not tile.has_down_border()):
-            moves.append("D")
+            if(not grid[pos[0]+1][pos[1]].is_occupied()):
+                moves.append("D")
         if(not tile.has_right_border()):
-            moves.append("R")
+            if(not grid[pos[0]][pos[1]+1].is_occupied()):
+                moves.append("R")
         return moves
 
     def random_move(self):
         moves = self.get_valid_moves()
         move_count = len(moves)-1
+        random.shuffle(moves)
         direction = random.randint(0, move_count)
         move = moves[direction]
 
@@ -202,13 +214,13 @@ class dirt_machine:
             if(len(valid_moves) == 1):
                 pass
             # we keep track of previous moves using nummbers of different signs to indicate direction
-            elif(self.prev_move == 1):
+            elif(self.prev_move == 1 and "D" in valid_moves):
                 valid_moves.remove("D")
-            elif(self.prev_move == -1):
+            elif(self.prev_move == -1 and "U" in valid_moves):
                 valid_moves.remove("U")
-            elif(self.prev_move == 2):
+            elif(self.prev_move == 2 and "L" in valid_moves):
                 valid_moves.remove("L")
-            elif(self.prev_move == -2):
+            elif(self.prev_move == -2 and "R" in valid_moves):
                 valid_moves.remove("R")
             else:
                 pass
@@ -241,7 +253,7 @@ class dirt_machine:
             case_d = True if (max_new_dist == 1 and rel_pos[0] == "D" and not "D" in next_valid_moves) else False
 
             # if vacuum might get stuck, remove best move and go with safe sub optimal move
-            if(case_a or case_b or case_c or case_d and len(valid_moves) > 1):
+            if(case_a or case_b or case_c or case_d and len(valid_moves) > 1 and best_move in valid_moves):
                 valid_moves.remove(best_move)
                 print("trying to escape")
 
@@ -307,6 +319,46 @@ class dirt_machine:
         else:
             self.random_move()
 
+        self.count += 1
+        if(self.count%5 == 0):
+            self.leave_dirt()
+
+
+    def move_away_from_dirt(self):
+        valid_moves = self.get_valid_moves()
+        current_position = self.room.dirt_machine_position()
+        row = current_position[0]
+        col = current_position[1]
+        dirt_list = self.room.get_dirt_list()
+        max = -1
+
+        if(len(dirt_list) != 0):
+            for move in valid_moves:
+                distance_sum = 0
+                for dirt in dirt_list:
+                    if(move == "U"):
+                        distance_sum += self.calculate_distance([row+1, col], dirt)
+                    elif(move == "D"):
+                        distance_sum += self.calculate_distance([row-1, col], dirt)
+                    elif(move == "L"):
+                        distance_sum += self.calculate_distance([row, col-1], dirt)
+                    else:
+                        distance_sum += self.calculate_distance([row, col+1], dirt)
+                if(distance_sum > max):
+                    max = distance_sum
+                    best_move = move
+            if(best_move == "U"):
+                self.move_up()
+            elif(best_move == "D"):
+                self.move_down()
+            elif(best_move == "L"):
+                self.move_left()
+            elif(best_move == "R"):
+                self.move_right()
+            else:
+                pass
+        else:
+            self.random_move()
         self.count += 1
         if(self.count%5 == 0):
             self.leave_dirt()

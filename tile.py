@@ -11,6 +11,16 @@ class tile:  # class defines one tile
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.dirt_machine = None
+        self.destination = False
+
+    def is_occupied(self):
+        return (self.vacuum or self.dirt_machine)
+
+    def set_destination(self, is_destination):
+        self.destination = is_destination
+
+    def is_destination(self):
+        return self.destination
 
     def set_dirt_machine(self):
         self.dirt_machine = True
@@ -62,7 +72,7 @@ class tile:  # class defines one tile
 
     def set_dirty(self,hasDirt):
         self.dirt = hasDirt
-            
+
 
     def clean(self):
         if(self.vacuum and self.dirt):
@@ -78,6 +88,12 @@ class tile:  # class defines one tile
 
     def has_vacuum(self):
         if self.vacuum is None:
+            return False
+        else:
+            return True
+
+    def has_dirt_machine(self):
+        if self.dirt_machine is None:
             return False
         else:
             return True

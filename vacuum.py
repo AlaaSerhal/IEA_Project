@@ -94,28 +94,39 @@ class vacuum:
 
     def get_moves_at_pos(self, pos):  # returns valid moves from a certain position in a grid
         moves = []
-        tile = self.room.get_array()[pos[0]][pos[1]]
+        grid = self.room.get_array()
+        tile = grid[pos[0]][pos[1]]
         if(not tile.has_up_border()):
-            moves.append("U")
+            if(not grid[pos[0]-1][pos[1]].is_occupied()):
+                moves.append("U")
         if(not tile.has_left_border()):
-            moves.append("L")
+            if(not grid[pos[0]][pos[1]-1].is_occupied()):
+                moves.append("L")
         if(not tile.has_down_border()):
-            moves.append("D")
+            if(not grid[pos[0]+1][pos[1]].is_occupied()):
+                moves.append("D")
         if(not tile.has_right_border()):
-            moves.append("R")
+            if(not grid[pos[0]][pos[1]+1].is_occupied()):
+                moves.append("R")
         return moves
 
     def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
+        pos = self.room.vacuum_position()
+        grid = self.room.get_array()
         tile = self.room.get_vacuum_tile()
         if(not tile.has_up_border()):
-            moves.append("U")
+            if(not grid[pos[0]-1][pos[1]].is_occupied()):
+                moves.append("U")
         if(not tile.has_left_border()):
-            moves.append("L")
+            if(not grid[pos[0]][pos[1]-1].is_occupied()):
+                moves.append("L")
         if(not tile.has_down_border()):
-            moves.append("D")
+            if(not grid[pos[0]+1][pos[1]].is_occupied()):
+                moves.append("D")
         if(not tile.has_right_border()):
-            moves.append("R")
+            if(not grid[pos[0]][pos[1]+1].is_occupied()):
+                moves.append("R")
         return moves
 
     def calculate_distance(self, pos1, pos2):  # calculates straight line distance between 2 positions
@@ -177,13 +188,13 @@ class vacuum:
             if(len(valid_moves) == 1):
                 pass
             # we keep track of previous moves using nummbers of different signs to indicate direction
-            elif(self.prev_move == 1):
+            elif(self.prev_move == 1 and "D" in valid_moves):
                 valid_moves.remove("D")
-            elif(self.prev_move == -1):
+            elif(self.prev_move == -1 and "U" in valid_moves):
                 valid_moves.remove("U")
-            elif(self.prev_move == 2):
+            elif(self.prev_move == 2 and "L" in valid_moves):
                 valid_moves.remove("L")
-            elif(self.prev_move == -2):
+            elif(self.prev_move == -2 and "R" in valid_moves):
                 valid_moves.remove("R")
             else:
                 pass
@@ -216,7 +227,7 @@ class vacuum:
             case_d = True if (min_new_dist == 1 and rel_pos[0] == "D" and not "D" in next_valid_moves) else False
 
             # if vacuum might get stuck, remove best move and go with safe sub optimal move
-            if(case_a or case_b or case_c or case_d and len(valid_moves) > 1):
+            if(case_a or case_b or case_c or case_d and len(valid_moves) > 1 and best_move in valid_moves):
                 valid_moves.remove(best_move)
                 print("trying to escape")
 
