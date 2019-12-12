@@ -28,6 +28,8 @@ def main():
             [sg.Text('Speed:'),sg.Slider(range=(1000,100),default_value=1000,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Text('Window dirt Period'),sg.Slider(range=(2,10),default_value=5,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Text('Agent Period'),sg.Slider(range=(2,10),default_value=5,size=(20,15),orientation='horizontal', disable_number_display=True)],
+            [sg.Spin([i for i in range(1,5)], initial_value=1), sg.Text('Cleaning Agents')],
+            [sg.Spin([i for i in range(0,5)], initial_value=0), sg.Text('Dirt Agents')],
             [sg.Frame(layout=[
             [sg.Radio('Case1 (Fully observable map and once generated dirt):', "Case1", default=False)],
             [sg.Radio('Case2 (Fully observable map and continuously added dirt):', "Case1", default=False)],
@@ -37,10 +39,10 @@ def main():
             [sg.Submit()]]
             window = sg.Window('Vacuum Cleaner Agent', layout)
             event, values = window.Read()
-            case1=values[7]
-            case2=values[8]
-            case3=values[9]
-            case4=values[10]
+            case1=values[9]
+            case2=values[10]
+            case3=values[11]
+            case4=values[12]
             rows=int(values[0])
             cols=int(values[1])
             dirty_tiles= int(values[2])
@@ -48,7 +50,8 @@ def main():
             globals.globals.speed=int(values[4])
             globals.globals.frequency=int(values[5])
             globals.globals.period=int(values[6])
-            print(int(values[4]))
+            globals.globals.cleaning_agents=int(values[7])
+            globals.globals.dirt_agents=int(values[8])
             if event in ('Submit'):
                 print('Borders are placed randomly')
             window.Close()
