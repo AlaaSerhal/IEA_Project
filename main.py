@@ -105,7 +105,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
@@ -170,7 +170,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
                     v.move_left()
                     pygame.time.delay(500)
@@ -241,7 +241,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-1)
-                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
 
                     run = False
@@ -329,7 +329,7 @@ def main():
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
                     v.set_position((rows//2)+1,(cols//2)-3)
-                    pygame.mixer.music.load('/home/alaa/Desktop/IEA_Project/game-over.wav')
+                    pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
 
                     run = False
