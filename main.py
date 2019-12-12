@@ -25,7 +25,7 @@ def main():
             [sg.Text('Please enter number of cols as an integer:'), sg.InputText()],
             [sg.Text('Please enter number of dirty tiles:'), sg.InputText()],
             [sg.Text('Please enter number of borders:'), sg.InputText()],
-            [sg.Text('Speed:'),sg.Slider(range=(1000,100),default_value=1000,size=(20,15),orientation='horizontal', disable_number_display=True)],
+            [sg.Text('Speed:'),sg.Slider(range=(1000,30),default_value=1000,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Text('Window dirt Period'),sg.Slider(range=(2,10),default_value=5,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Text('Agent Period'),sg.Slider(range=(2,10),default_value=5,size=(20,15),orientation='horizontal', disable_number_display=True)],
             [sg.Spin([i for i in range(1,5)], initial_value=1), sg.Text('Cleaning Agents')],
@@ -263,25 +263,35 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
 
-            #EXPLORE MAP CODE
-            #CASE 4
 
 
             if(pos2 is None):
                 pos2 = r.vacuum_position()
 
-
+            pos2 = copy.deepcopy ( r.vacuum_position() )
+            #pos2 = r.vacuum_position()
 
             pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
 
             print("pos 2")
             print(pos2)
+            
             if(not game__over):
                 path = mySolver.getLastActualUsedPath()
+                #machine.move_from_closest_dirt()
 
             #END OF EXPLORATION
 
+
+            # Take care of dynmaic collision
+
             for p in path:
+
+                if( not p in v.get_valid_moves() ):
+                    print("Vacuum Was Gonna Hit")
+                    #exit(0)
+                    break;
+
                 if(p == "L"):
                     v.move_left()
                 elif(p == "R"):
@@ -290,8 +300,16 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
+
+                mySolver.addExploredToGrid(r.get_array(), r.vacuum_position()[0], r.vacuum_position()[1] )
+
+                if(not game__over):
+                    machine.move_from_closest_dirt()
+
                 pygame.time.delay(globals.globals.speed)
 
+            #pos2 = r.vacuum_position();
+            
             pygame.display.update()
 
     elif(case4):
@@ -354,13 +372,16 @@ def main():
             #EXPLORE MAP CODE
             #CASE 4
 
+            if (pos is None or not pos[0] == -1):
+                
+                if(not pos is None):
+                    tempLastLoc = copy.deepcopy( pos )
+                
 
-
-            if(pos is None):
                 pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
                 print('target pos: ' + str(pos) )
 
-            if (not pos[0] == -1):
+
                 if(not game__over):
                     path = mySolver.getLastActualUsedPath()
 
@@ -368,11 +389,28 @@ def main():
 
                 print(r.vacuum_position() )
 
-                tempLastLoc = copy.deepcopy( pos )
 
-                pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
 
-                print('target pos: ' + str(pos) )
+            #if(pos is None):
+            #    pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
+            #    print('target pos: ' + str(pos) )
+
+            #if (not pos[0] == -1):
+            #    
+            #    if(not game__over):
+            #        path = mySolver.getLastActualUsedPath()
+
+            #    print('path: ' + str(path) )
+
+            #    print(r.vacuum_position() )
+
+                
+
+            #    tempLastLoc = copy.deepcopy( pos )
+
+            #    pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
+
+            #    print('target pos: ' + str(pos) )
 
                 #pygame.display.update()
 
@@ -381,9 +419,12 @@ def main():
                 if(pos2 is None):
                     pos2 = tempLastLoc
 
+                
 
+                pos2 = mySolver.dirtPathIterator( copy.deepcopy( r.vacuum_position() ) )
 
-                pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+#                pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+
 
                 print("pos 2")
                 print(pos2)
@@ -395,6 +436,12 @@ def main():
             #END OF EXPLORATION
 
             for p in path:
+
+                if( not p in v.get_valid_moves() ):
+                    print("Vacuum Was Gonna Hit")
+                    #exit(0)
+                    break;
+
                 if(p == "L"):
                     v.move_left()
                 elif(p == "R"):
@@ -403,8 +450,28 @@ def main():
                     v.move_up()
                 elif(p == "D"):
                     v.move_down()
+
+
+                mySolver.addExploredToGrid(r.get_array(), r.vacuum_position()[0], r.vacuum_position()[1] )
+
+                if(not game__over):
+                    machine.move_from_closest_dirt()
+                
                 pygame.time.delay(globals.globals.speed)
 
+
+            path.clear();
+
+            #ADDED -- shouldn't be a problem 
+            #if(not pos[0] == -1):
+            #    pos = r.vacuum_position();
+            #else:
+                #ADDED -- shouldn't be a problem 
+            #    pos2 = r.vacuum_position();
+            
+            
+           
+            
             pygame.display.update()
 
 

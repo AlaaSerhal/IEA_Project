@@ -108,8 +108,8 @@ class solver:
 
         #col = random.randint(0, len(self.exploredGridActual[0])-1)
         #row = random.randint(0, len(self.exploredGridActual)-1)
-        print("can't reach here")
-        exit()
+        #print("can't reach here")
+        #exit()
 
         return [rowCol[0],rowCol[1]]
 
@@ -157,8 +157,10 @@ class solver:
             newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
             
             if( not (destPos[0] == newCurrPos[0] and destPos[1] == newCurrPos[1]) ):
+                print("dest can't be currPos")
                 print(destPos)
                 print(newCurrPos)
+                
                 exit()
 
             return destPos
@@ -256,6 +258,8 @@ class solver:
         if( grid[row][col].has_down_border() and row+1 < len(grid) ):
             self.exploredGridActual[row+1][col].set_up_border()
                 
+    #def addTileToExplored(self):
+
         
         
     def exploreByPath(self,grid,srcRow,srcCol,path):
@@ -274,7 +278,7 @@ class solver:
                     return currentPos
                 else:
                     currentPos = [currentPos[0] -1, currentPos[1]]
-                    self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+                    #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
@@ -288,7 +292,7 @@ class solver:
                     return currentPos
                 else:
                     currentPos = [currentPos[0], currentPos[1] + 1]
-                    self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+                    #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
@@ -303,7 +307,7 @@ class solver:
                     return currentPos
                 else:
                     currentPos = [currentPos[0], currentPos[1] - 1]
-                    self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+                    #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
@@ -319,7 +323,7 @@ class solver:
                     return currentPos
                 else:
                     currentPos = [currentPos[0] +1, currentPos[1]]
-                    self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
+                    #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
                     self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 

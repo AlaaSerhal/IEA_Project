@@ -166,6 +166,9 @@ class vacuum:
 
 
     def move_to_closest_dirt(self):  # take one step closer to closest dirt
+        
+        next_pos = None
+        
         distances = []
         valid_moves = self.get_valid_moves()
         min_distance = 10000
@@ -217,6 +220,9 @@ class vacuum:
                     min_new_dist = new_dist
                     best_move = move
                     next_pos = new_pos
+
+            if(next_pos is None):
+                return;
 
             # prevent vacuum from getting stuck behind border in endless loop if dirt is directly behind it
             rel_pos = self.get_relative_position(next_pos, closest_dirt)
