@@ -250,7 +250,8 @@ class solver:
 
     def escapeFromAgent(self,currPos, machinePos):
         
-        #print("remove me")
+        #print("escaping")
+        #print(currPos)
         #exit(0)
 
         #where to add fake barrier?
@@ -261,7 +262,13 @@ class solver:
 
         fakeGrid = copy.deepcopy(self.trueGrid)
         
-        print(machinePos)
+        if(machinePos[0] >= len(fakeGrid) or machinePos[1] >= len(fakeGrid[0]) or machinePos[0] < 0 or machinePos[1] < 0):
+            self.exploreByPath(self.trueGrid,currPos[0],currPos[1],[])
+            return [0,0]
+
+        #if(machinePos[0] == 7 or machinePos[1] == 7):
+        #    while(True):
+        #        _ = 1
 
         fakeGrid[machinePos[0]][machinePos[1]].set_borders(True,True,True,True)
 
@@ -283,6 +290,9 @@ class solver:
             
             newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
 
+        
+        #print(pathDir)
+        
         return newCurrPos
        
 
@@ -497,12 +507,12 @@ class solver:
             if index > 0:
 
                 obj = obj[1:]
-                pathSrcToDest[index-1] = pathSrcToDest[index-1][1:]                
+                prev = copy.deepcopy ( pathSrcToDest[index-1][1:]  )              
 
                 rowCurr = int(obj.split("x")[0] )
                 colCurr = int(obj.split("x")[1] )
-                rowPrev = int(pathSrcToDest[index -1].split("x")[0] )
-                colPrev = int(pathSrcToDest[index -1].split("x")[1] )
+                rowPrev = int(prev.split("x")[0] )
+                colPrev = int(prev.split("x")[1] )
 
                 if (rowCurr > rowPrev ):
                     drctPath.append("D")

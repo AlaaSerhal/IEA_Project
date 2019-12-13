@@ -432,7 +432,7 @@ def main():
 
                         cycleStuckPos[index] = [r.vacuum_position(index)[0] + deltaY, r.vacuum_position(index)[1] + deltX, ]
                         
-                        break;
+                        continue;
 
 
                     if(p == "L"):
@@ -480,7 +480,7 @@ def main():
 
                         cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
                         
-                        break;
+                        continue;
 
 
                     if(p == "L"):
@@ -621,6 +621,7 @@ def main():
                     if(not game__over):
                         path[index] = mySolver.getLastActualUsedPath()
 
+                pst = [-1,-1]
                 #if stuck by other agent abort mission
                 if(cyclesStuckCount[index] > 1):
                     #print("getting out")
@@ -630,6 +631,17 @@ def main():
                     #print("agent")
                     #print(index)
                     #print(pst)
+
+                #print(index)
+                #print("My pos")
+                #print(r.vacuum_position(index))
+                #print("dest")
+                #if(pst[0] == -1):
+                #    print(pos2)
+                #else:
+                #    print(pst)
+                #print("path")
+                #print(path[index])
 
             index = -1
             for _ in dirt_machines:
@@ -669,6 +681,10 @@ def main():
 
             #END OF EXPLORATION
 
+            print("paths")
+            print(path[0])
+            print(path[1])
+
             m = len(path[0])
             for p in path:
                 if(len(p) < m):
@@ -704,7 +720,7 @@ def main():
                     #print("in pathX loop")
 
                     if( not p in vacuums[index].get_valid_moves() ):
-                        #print("Vacuum Was Gonna Hit")
+                        print(p + " Vacuum Was Gonna Hit")
                         #exit(0)
 
                         cyclesStuckCount[index] += 1
@@ -726,7 +742,7 @@ def main():
 
                         #print(cyclesStuckCount[index])
 
-                        break;
+                        continue;
 
                     if(p == "L"):
                         vacuums[index].move_left()
@@ -736,6 +752,8 @@ def main():
                         vacuums[index].move_up()
                     elif(p == "D"):
                         vacuums[index].move_down()
+
+                    print("moved vacuum " + str(index) )
 
 
                     mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
@@ -776,7 +794,7 @@ def main():
 
                         cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
                         
-                        break;
+                        continue;
 
 
                     if(p == "L"):
@@ -788,11 +806,13 @@ def main():
                     elif(p == "D"):
                         dirt_machines[index].move_down()
 
+                    print("moved machine " + str(index) )
                    
-                path[index] = []
-                pathDirt[index] = []
 
                 pygame.time.delay(globals.globals.speed)
+
+            path[index] = []
+            pathDirt[index] = []
             
             #print("idx loop")
 
