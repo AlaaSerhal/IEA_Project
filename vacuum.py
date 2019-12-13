@@ -317,5 +317,4 @@ class vacuum:
             else:
                 pass
         else:  # no dirt left to chase
-            print("pass")
             pass
