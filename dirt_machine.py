@@ -18,6 +18,11 @@ class dirt_machine:
         self.count = 0
         self.id = id
 
+    def incrementCountForDirt(self, probability):
+        self.count += 1
+        if(self.count > globals.globals.period and random.randint(0,10) <= probability ):
+            self.leave_dirt()
+            self.count = 0
 
     def set_position(self, row, col):  # sets position of vaccum and moves the image and deletes the old image
         # print("setting dirt machinewith ID: ", self.id)

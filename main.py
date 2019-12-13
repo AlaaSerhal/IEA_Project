@@ -121,6 +121,7 @@ def main():
 
     globals.globals.start_duration = datetime.now().timestamp()
 
+    
 
 # depending on the Specific case
     if(case1):  # fully observable with set amount of dirt
@@ -502,6 +503,9 @@ def main():
                         dirt_machines[index].move_up()
                     elif(p == "D"):
                         dirt_machines[index].move_down()
+                    
+                    dirt_machines[index].incrementCountForDirt(8)
+
 
 
 
@@ -818,6 +822,9 @@ def main():
                         dirt_machines[index].move_up()
                     elif(p == "D"):
                         dirt_machines[index].move_down()
+
+                    dirt_machines[index].incrementCountForDirt(8)
+
 
                     print("moved machine " + str(index) )
 

@@ -46,6 +46,20 @@ class tile:  # class defines one tile
     def remove_vacuum(self):
         self.vacuum = None
 
+    def getBorderCount(self):
+
+        count = 0
+        if(self.up_border):
+            count += 1
+        if(self.down_border):
+            count += 1
+        if(self.left_border):
+            count += 1
+        if(self.right_border):
+            count += 1
+
+        return count
+
     def set_borders(self, up, down, left, right):
         self.left_border = left
         self.right_border = right

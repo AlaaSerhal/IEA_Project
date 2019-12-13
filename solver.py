@@ -8,6 +8,8 @@ import pygame as pygame
 import copy
 import random
 
+from random import choices
+
 from GA import GA
 
 class solver:
@@ -28,8 +30,18 @@ class solver:
         self.exploredGridActual = [ [None]*len(grid[0]) for _ in range(0,len(grid)) ]
 
 
+        size = len(grid[0]) * len(grid)
+        self.areaForDirtScore = [ 0 ] * size
+        self.flatGrid = []
+
+        self.cummalScore = 0
+
+        self.scoreMapDirtAgent()
+
         for row in range(0,len(grid)):
             for col in range(0,len(grid[0])):
+
+                self.flatGrid.append( copy.deepcopy( grid[row][col] ) )
 
                 self.exploredGridActual[row][col] = copy.deepcopy( grid[row][col] )
 
@@ -181,6 +193,18 @@ class solver:
 
             return destPos
 
+    def getCummScoreForDirt(self):
+        return self.cummalScore
+
+    def chooseTileToDirty(self):
+
+        population = self.flatGrid
+        weights = self.areaForDirtScore
+
+        chosen = choices(population, weights) 
+
+        return [ chosen[0].get_x_pos(), chosen[0].get_y_pos() ] 
+
     def addDirtPathIterator(self,currPos):
         
         #where should i add dirt
@@ -189,7 +213,7 @@ class solver:
         #currentGraph = self.transformGridToGraph(self.getExploredGrid())
         
 
-        destPos = self.getRandomTile()
+        destPos = self.chooseTileToDirty()
         
         pathDir = self.getPathDirections(self.getExploredGrid()
         ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
@@ -201,6 +225,30 @@ class solver:
         return newCurrPos
         
 
+    def scoreMapDirtAgent(self):
+
+        self.cummalScore = 0
+
+        for idx in range(0,len(self.areaForDirtScore)):
+           
+            row =  int (idx / len(self.trueGrid[0]) )
+            col =  int (idx % len(self.trueGrid[0]) )
+
+            score = self.trueGrid[row][col].getBorderCount()
+            
+            if(  col+1 < len(self.trueGrid[0]) ):
+                score += 0.6 * self.trueGrid[row][col + 1].getBorderCount()
+            if(  col-1 >= 0 ):
+                score += 0.6 * self.trueGrid[row][col - 1].getBorderCount()
+            if( row-1 >= 0 ):
+                score += 0.6 * self.trueGrid[row - 1][col].getBorderCount()
+            if( row+1 < len(self.trueGrid) ):
+                score += 0.6 * self.trueGrid[row + 1][col].getBorderCount()
+            
+            self.cummalScore += score
+
+            self.areaForDirtScore[ idx] = score
+            
 
 
     def expoloreAllBorders(self):
@@ -364,7 +412,7 @@ class solver:
 
         
         
-    def exploreByPath(self,grid,srcRow,srcCol,path, savePath = True):
+    def exploreByPath(self,grid,srcRow,srcCol,path, isVacuum = True, savePath = True):
 
         currentPos = [srcRow, srcCol]
         
@@ -385,7 +433,7 @@ class solver:
                     if(savePath):
                         self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
-                    if( self.gntcAlgrth.hasPoolInit()):
+                    if( isVacuum and self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
 
             elif(path[idx] == 'R'):
@@ -400,7 +448,7 @@ class solver:
                     if(savePath):
                         self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
-                    if( self.gntcAlgrth.hasPoolInit()):
+                    if( isVacuum and self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
 
                     
@@ -417,7 +465,7 @@ class solver:
                         self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
 
-                    if( self.gntcAlgrth.hasPoolInit()):
+                    if( isVacuum and self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
 
 
@@ -433,7 +481,7 @@ class solver:
                     if(savePath):
                         self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
-                    if( self.gntcAlgrth.hasPoolInit()):
+                    if( isVacuum and self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
 
         
