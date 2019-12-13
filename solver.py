@@ -3,6 +3,8 @@ from dij import Graph
 from dij import dijkstra
 from dij import shortest
 
+import pygame as pygame
+
 import copy
 import random
 
@@ -120,8 +122,8 @@ class solver:
         #if there is dirt previously explored g to it
         #else go to random place to discover dirt
         
-        print( "Dest to go to for dirt" )
-        print ( self.getNextDirt(currPos) )
+        #print( "Dest to go to for dirt" )
+        #print ( self.getNextDirt(currPos) )
 
         if( not self.getNextDirt(currPos)[0] == -1 ):
 
@@ -134,33 +136,47 @@ class solver:
             pathDir = self.getPathDirections(self.getExploredGrid()
             ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
             
-            print("path dir")
-            print(pathDir)
+            #print("path dir")
+            #print(pathDir)
 
             newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
             
-            print("new pos")
-            print(newCurrPos)
+            #print("new pos")
+            #print(newCurrPos)
 
             return newCurrPos
             
 
         else:
 
+            print(currPos)
+
+            
             currentGraph = copy.deepcopy (self.getLastGraph() )
+
+            #currentGraph = self.transformGridToGraph(grid)
             
             destPos = self.getTilePathForDirtExploration()
 
             pathDir = self.getPathDirections(self.getExploredGrid()
             ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
             
+           
+            #pathDir = self.getPathDirections(grid
+            #,currentGraph,myPos[0],myPos[1],destPos[0],destPos[1])
+
+            #print(pathDir)
+
             newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
             
             if( not (destPos[0] == newCurrPos[0] and destPos[1] == newCurrPos[1]) ):
-                print("dest can't be currPos")
+                print("path finder is faulty")
                 print(destPos)
                 print(newCurrPos)
                 
+                #while(True):
+                #    _ = 1
+
                 exit()
 
             return destPos
@@ -181,7 +197,7 @@ class solver:
                     self.exploredGridActual[row][col].clean()
                     self.exploredGridActual[row][col].remove_vacuum()
 
-        self.transformGridToGraph(self.getExploredGrid())
+        self.transformGridToGraph( copy.deepcopy( self.getExploredGrid()) )
 
     def discoverMapIter(self,currPos):
         
@@ -208,6 +224,45 @@ class solver:
             
         return [-1,-1]
 
+
+    #If you get stuck you need to acknowledge the machine as a barrier
+
+    def escapeFromAgent(self,currPos, machinePos):
+        
+        print("remove me")
+        exit(0)
+
+        #where to add fake barrier?
+        #add around whole tile just to be sure
+        #see if that causes any issue
+
+        pathDir = []
+
+        fakeGrid = copy.deepcopy(self.trueGrid)
+        fakeGrid[machinePos[0]][machinePos[1]].set_borders(True,True,True,True)
+
+        counter = 1
+
+        while(pathDir == []):
+
+            counter += 1
+            if(counter > 12):
+                print("can't run away")
+                exit(0)
+
+            currentGraph = self.transformGridToGraph( copy.deepcopy(fakeGrid), False )
+            
+            destPos = self.getRandomTile()
+            
+            pathDir = self.getPathDirections(self.getExploredGrid()
+            ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
+            
+            newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
+
+        return newCurrPos
+       
+
+
     #
     # add discovered something new since last path as a variable as to not update graph needlessly
     #
@@ -229,6 +284,13 @@ class solver:
                 
                 
         return None    
+
+    def getRandomTile(self):
+        
+        row = random.randint(0, len(self.trueGrid) - 1)
+        col = random.randint(0, len(self.trueGrid[0]) - 1)
+                
+        return [row,col]    
     
     def getExploredGrid(self):
         return self.exploredGridActual
@@ -262,7 +324,7 @@ class solver:
 
         
         
-    def exploreByPath(self,grid,srcRow,srcCol,path):
+    def exploreByPath(self,grid,srcRow,srcCol,path, savePath = True):
 
         currentPos = [srcRow, srcCol]
         
@@ -280,7 +342,8 @@ class solver:
                     currentPos = [currentPos[0] -1, currentPos[1]]
                     #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
-                    self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
+                    if(savePath):
+                        self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
                     if( self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
@@ -294,7 +357,8 @@ class solver:
                     currentPos = [currentPos[0], currentPos[1] + 1]
                     #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
-                    self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
+                    if(savePath):
+                        self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
                     if( self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
@@ -309,8 +373,9 @@ class solver:
                     currentPos = [currentPos[0], currentPos[1] - 1]
                     #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
+                    if(savePath):
+                        self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
-                    self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
                     if( self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
@@ -325,7 +390,8 @@ class solver:
                     currentPos = [currentPos[0] +1, currentPos[1]]
                     #self.addExploredToGrid(grid,currentPos[0] , currentPos[1])
 
-                    self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
+                    if(savePath):
+                        self.actualMovedPath.append( copy.deepcopy( path[idx] ) )
 
                     if( self.gntcAlgrth.hasPoolInit()):
                         self.gntcAlgrth.updateMatrixData(currentPos[0] , currentPos[1], grid[currentPos[0]][currentPos[1]].has_dirt() )
@@ -344,7 +410,7 @@ class solver:
 
         return self.lastGraph
 
-    def transformGridToGraph(self,grid):
+    def transformGridToGraph(self,grid, saveGraph = True):
     
         g = Graph()
         
@@ -369,11 +435,9 @@ class solver:
                 if(not grid[y][x].has_right_border()  ):
                     g.add_edge(grid[y][x].get_string_id(), grid[y][x+1].get_string_id(), 1)     
     
-        
-        self.lastGraph = copy.deepcopy (g)
+        if(saveGraph):
+            self.lastGraph = copy.deepcopy (g)
 
-        return g
-    
         #print ('Graph data:')
         #for v in g:
         #    for w in v.get_connections():
@@ -381,6 +445,10 @@ class solver:
         #        wid = w.get_id()
         #        print ('( %s , %s, %3d)'  % ( vid, wid, v.get_weight(w)))
     
+
+        return g
+    
+      
     @staticmethod
     def getPathDirections(grid,g,y1,x1,y2,x2):
     
@@ -397,13 +465,22 @@ class solver:
 
         for index, obj in enumerate(pathSrcToDest):
             if index > 0:
-                if (obj[1] > pathSrcToDest[index -1][1] ):
+
+                obj = obj[1:]
+                pathSrcToDest[index-1] = pathSrcToDest[index-1][1:]                
+
+                rowCurr = int(obj.split("x")[0] )
+                colCurr = int(obj.split("x")[1] )
+                rowPrev = int(pathSrcToDest[index -1].split("x")[0] )
+                colPrev = int(pathSrcToDest[index -1].split("x")[1] )
+
+                if (rowCurr > rowPrev ):
                     drctPath.append("D")
-                elif (obj[1] < pathSrcToDest[index -1][1] ):
+                elif (rowCurr < rowPrev ):
                     drctPath.append("U")
-                elif (obj[3] < pathSrcToDest[index -1][3] ):
+                elif (colCurr < colPrev ):
                     drctPath.append("L")
-                elif (obj[3] > pathSrcToDest[index -1][3] ):
+                elif (colCurr > colPrev ):
                     drctPath.append("R")     
         
         

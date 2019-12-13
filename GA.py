@@ -54,8 +54,8 @@ class GA:
     
     def updateMatrixData(self,row,col, foundDirt):
         
-        print("matrix data")
-        print(self.matrixData[row][col])
+        #print("matrix data")
+        #print(self.matrixData[row][col])
 
         visits = int (self.matrixData[row][col][0] ) + 1
         dirtCount =  int (self.matrixData[row][col][1])
@@ -99,8 +99,8 @@ class GA:
 
             for i in keysDesc :
                 for j in dictionary[i]:
-                    print("here")
-                    print ((i, j), end =" ") 
+                    #print("here")
+                    #print ((i, j), end =" ") 
                     if(indx > 4):
                         break
                     else:
@@ -143,7 +143,7 @@ class GA:
 
         for i in keysDesc :
             for j in dictionary[i]:
-                print ((i, j), end =" ") 
+                #print ((i, j), end =" ") 
                 if(indx > maxSelection):
                     break
                 else:
