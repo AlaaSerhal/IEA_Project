@@ -15,6 +15,8 @@ class vacuum:
         self.prev_prev_prev_prev_move = None
         self.loop = False
         self.id = id
+        self.prev_target = None
+        self.current_target = None
 
     def set_position(self, row, col):  # sets position of vaccum and moves the image and deletes the old image
         old = self.room.vacuum_position(self.id)
@@ -167,7 +169,7 @@ class vacuum:
 
 
     def move_to_closest_dirt(self):  # take one step closer to closest dirt
-
+        self.prev_target = self.current_target
         next_pos = None
 
         distances = []
@@ -176,14 +178,32 @@ class vacuum:
         closest_dirt = None
         current_position = self.room.vacuum_position(self.id)
         dirt_list = self.room.get_dirt_list()
-        if(len(dirt_list) != 0):  # check if there is any dirt left on the map
-            for dirt in dirt_list:  # calculate distance between vacuum and every dirt
+        dirt_list_copy = dirt_list.copy()
+        dirt_targeted = self.room.get_dirt_targeted_list()
+        to_pop = []
+        for x in range(len(dirt_targeted)):  # the problem is i am removing the one i marked myself!
+            if(dirt_targeted[x] == True and dirt_list_copy[x] != self.prev_target):
+                to_pop.append(int(x))
+
+        dirt_list_copy = [i for j, i in enumerate(dirt_list_copy) if j not in to_pop]
+
+        if(len(dirt_list_copy) != 0):  # check if there is any dirt left on the map
+            for dirt in dirt_list_copy:  # calculate distance between vacuum and every dirt
                 if(len(valid_moves) != 0):
                     dist = self.calculate_distance(current_position, dirt)
                     distances.append(dist)
                     if(dist < min_distance):  # get closest dirt
                         min_distance = dist
                         closest_dirt = [dirt[0], dirt[1]]
+
+            self.room.get_dirt_targeted_list()[dirt_list.index(closest_dirt)] = True
+            self.current_target = closest_dirt
+            if(self.current_target != self.prev_target):
+                if(self.prev_target in dirt_list):
+                    self.room.get_dirt_targeted_list()[dirt_list.index(self.prev_target)] = False
+            if(closest_dirt == None):
+                print("none")
+                return
 
             min_new_dist = 10000
             best_move = ""
@@ -297,4 +317,5 @@ class vacuum:
             else:
                 pass
         else:  # no dirt left to chase
+            print("pass")
             pass

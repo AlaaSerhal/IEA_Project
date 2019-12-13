@@ -6,6 +6,7 @@ import globals
 class room:
     def __init__(self, cell_size, rows, cols, window):
         self.dirt_list = []
+        self.dirt_targeted = []
         self.cell_size = cell_size
         self.rows = rows
         self.cols = cols
@@ -50,8 +51,8 @@ class room:
                     set = True
                 else:
                     pass
-        print(self.vacuum)
-        print(self.dirt_machine)
+        print("Vacuum initial positions", self.vacuum)
+        print("Dirt agent initial positions", self.dirt_machine)
 
     def draw_grid(self):  # draw grid and outside borders
         x = 0
@@ -128,6 +129,7 @@ class room:
         element = [row, col]
         if(element not in self.dirt_list):
             self.dirt_list.append(element)
+            self.dirt_targeted.append(False)
         pygame.display.update()
 
     def get_window(self):
@@ -163,8 +165,13 @@ class room:
     def clean_tile(self, row, col):
         element = [row, col]
         if(element in self.dirt_list):
+            index = self.dirt_list.index(element)
             self.dirt_list.remove(element)
+            self.dirt_targeted.pop(index)
         self.grid[row][col].clean()
+
+    def get_dirt_targeted_list(self):
+        return self.dirt_targeted
 
     def set_dirt_machine(self, id, row, col):
         self.grid[self.dirt_machine[id][0]][self.dirt_machine[id][1]].remove_dirt_machine()
