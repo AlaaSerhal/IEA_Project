@@ -234,6 +234,9 @@ def main():
 
         mySolver.expoloreAllBorders()
 
+        cyclesStuckCount = [1]
+        cycleStuckPos = [ [0,0] ]
+
         while run:
 
             if(count >= globals.globals.frequency):
@@ -269,7 +272,7 @@ def main():
                     text_rect.center = (window.get_width()//2, window.get_height()//2)
                     window.blit(text_surface, text_rect)
                     pygame.display.update()
-                    v.set_position((rows//2)+1,(cols//2)-1)
+                    vacuums[0].set_position((rows//2)+1,(cols//2)-1)
                     pygame.mixer.music.load('game-over.wav')
                     pygame.mixer.music.play(2)
 
@@ -284,49 +287,94 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
+            
+            index = -1
+            for v in vacuums:
+                
+                index += 1
+                if(len(path) < index + 1):
+                    path.append([])
+                if(len(cyclesStuckCount) < index + 1):
+                    cyclesStuckCount.append(1)
+                    cycleStuckPos.append( [0,0] )
 
+                if(pos2 is None):
+                    pos2 = r.vacuum_position(index)
 
+                pos2 = copy.deepcopy ( r.vacuum_position(index) )
+                #pos2 = r.vacuum_position()
 
-            if(pos2 is None):
-                pos2 = r.vacuum_position()
+                pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
 
-            pos2 = copy.deepcopy ( r.vacuum_position() )
-            #pos2 = r.vacuum_position()
-
-            pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
-
-            print("pos 2")
-            print(pos2)
-
-            if(not game__over):
-                path = mySolver.getLastActualUsedPath()
-                #machine.move_from_closest_dirt()
-
-            #END OF EXPLORATION
-
-
-            # Take care of dynmaic collision
-
-            for p in path:
-
-                if( not p in v.get_valid_moves() ):
-                    print("Vacuum Was Gonna Hit")
-                    #exit(0)
-                    break;
-
-                if(p == "L"):
-                    v.move_left()
-                elif(p == "R"):
-                    v.move_right()
-                elif(p == "U"):
-                    v.move_up()
-                elif(p == "D"):
-                    v.move_down()
-
-                mySolver.addExploredToGrid(r.get_array(), r.vacuum_position()[0], r.vacuum_position()[1] )
+                #print("pos 2")
+                #print(pos2)
 
                 if(not game__over):
-                    machine.move_from_closest_dirt()
+                    path[index] = mySolver.getLastActualUsedPath()
+                    #machine.move_from_closest_dirt()
+
+
+                # Take care of dynmaic collision
+
+                #if stuck by other agent abort mission
+                if(cyclesStuckCount[index] > 1):
+                    mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
+                    path[index] = mySolver.getLastActualUsedPath();
+
+            m = len(path[0])
+            for p in path:
+                if(len(p) < m):
+                    m = len(p)
+
+            
+            for idx in range(0,m):
+                
+                index = -1
+                for pathX in path:
+
+                    index += 1
+                    
+                    #print(index)
+                    #print(idx)
+
+                    p = pathX[idx]
+
+                    # Take care of dynmaic collision
+                    if( not p in vacuums[index].get_valid_moves() ):
+                        print("Vacuum Was Gonna Hit")
+                        #exit(0)
+                        cyclesStuckCount[index] += 1
+                        
+                        deltX = 0
+                        deltaY = 0
+                        if(p == "L"):
+                            deltX = -1
+                        elif(p == "R"):
+                            deltX = 1
+                        elif(p == "U"):
+                            deltaY = -1
+                        elif(p == "D"):
+                            deltaY = 1
+
+                        cycleStuckPos[index] = [r.vacuum_position(index)[0] + deltaY, r.vacuum_position(index)[1] + deltX, ]
+                        
+                        break;
+
+
+                    if(p == "L"):
+                        vacuums[index].move_left()
+                    elif(p == "R"):
+                        vacuums[index].move_right()
+                    elif(p == "U"):
+                        vacuums[index].move_up()
+                    elif(p == "D"):
+                        vacuums[index].move_down()
+
+                    mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
+
+                    
+                    #if(not game__over and globals.globals.dirt_agents > 0):
+                    #    dirt_machines[0].move_from_closest_dirt()
 
                 pygame.time.delay(globals.globals.speed)
 

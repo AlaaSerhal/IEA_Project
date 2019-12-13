@@ -149,7 +149,7 @@ class solver:
 
         else:
 
-            print(currPos)
+            #print(currPos)
 
             
             currentGraph = copy.deepcopy (self.getLastGraph() )
@@ -229,8 +229,8 @@ class solver:
 
     def escapeFromAgent(self,currPos, machinePos):
         
-        print("remove me")
-        exit(0)
+        #print("remove me")
+        #exit(0)
 
         #where to add fake barrier?
         #add around whole tile just to be sure
