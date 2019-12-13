@@ -44,12 +44,13 @@ class dirt_machine:
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_up_border() and row > 0):
-            self.set_position(row-1, col)
-            # keeping track of previous moves
-            self.prev_prev_prev_prev_move = self.prev_prev_prev_move
-            self.prev_prev_prev_move = self.prev_prev_move
-            self.prev_prev_move = self.prev_move
-            self.prev_move = 1
+            if(not grid[position[0]-1][position[1]].is_occupied()):
+                self.set_position(row-1, col)
+                # keeping track of previous moves
+                self.prev_prev_prev_prev_move = self.prev_prev_prev_move
+                self.prev_prev_prev_move = self.prev_prev_move
+                self.prev_prev_move = self.prev_move
+                self.prev_move = 1
         else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move up from current position.")
 
@@ -59,12 +60,13 @@ class dirt_machine:
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
-            self.set_position(row+1, col)
-            # keeping track of previous moves
-            self.prev_prev_prev_prev_move = self.prev_prev_prev_move
-            self.prev_prev_prev_move = self.prev_prev_move
-            self.prev_prev_move = self.prev_move
-            self.prev_move = -1
+            if(not grid[position[0]+1][position[1]].is_occupied()):
+                self.set_position(row+1, col)
+                # keeping track of previous moves
+                self.prev_prev_prev_prev_move = self.prev_prev_prev_move
+                self.prev_prev_prev_move = self.prev_prev_move
+                self.prev_prev_move = self.prev_move
+                self.prev_move = -1
         else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move down from current position.")
 
@@ -74,12 +76,13 @@ class dirt_machine:
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
-            self.set_position(row, col+1)
-            # keeping track of previous moves
-            self.prev_prev_prev_prev_move = self.prev_prev_prev_move
-            self.prev_prev_prev_move = self.prev_prev_move
-            self.prev_prev_move = self.prev_move
-            self.prev_move = 2
+            if(not grid[position[0]][position[1]+1].is_occupied()):
+                self.set_position(row, col+1)
+                # keeping track of previous moves
+                self.prev_prev_prev_prev_move = self.prev_prev_prev_move
+                self.prev_prev_prev_move = self.prev_prev_move
+                self.prev_prev_move = self.prev_move
+                self.prev_move = 2
         else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move right from current position.")
 
@@ -89,12 +92,13 @@ class dirt_machine:
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_left_border() and col > 0):
-            self.set_position(row, col-1)
-            # keeping track of previous moves
-            self.prev_prev_prev_prev_move = self.prev_prev_prev_move
-            self.prev_prev_prev_move = self.prev_prev_move
-            self.prev_prev_move = self.prev_move
-            self.prev_move = -2
+            if(not grid[position[0]][position[1]-1].is_occupied()):
+                self.set_position(row, col-1)
+                # keeping track of previous moves
+                self.prev_prev_prev_prev_move = self.prev_prev_prev_move
+                self.prev_prev_prev_move = self.prev_prev_move
+                self.prev_prev_move = self.prev_move
+                self.prev_move = -2
         else:  # cannot move up if there is a border
             raise Exception("Invalid move! Cannot move up from current position.")
 
@@ -178,7 +182,7 @@ class dirt_machine:
         if(not tile.has_right_border()):
             if(not grid[pos[0]][pos[1]+1].is_occupied()):
                 moves.append("R")
-        
+
        # print(moves)
 
         return moves

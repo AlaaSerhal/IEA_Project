@@ -196,14 +196,16 @@ class vacuum:
                         min_distance = dist
                         closest_dirt = [dirt[0], dirt[1]]
 
+            if(closest_dirt == None):
+                self.prev_target = None
+                return
+
             self.room.get_dirt_targeted_list()[dirt_list.index(closest_dirt)] = True
             self.current_target = closest_dirt
             if(self.current_target != self.prev_target):
                 if(self.prev_target in dirt_list):
                     self.room.get_dirt_targeted_list()[dirt_list.index(self.prev_target)] = False
-            if(closest_dirt == None):
-                print("none")
-                return
+
 
             min_new_dist = 10000
             best_move = ""

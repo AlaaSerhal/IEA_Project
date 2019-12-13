@@ -15,7 +15,7 @@ def isVacuumInPos( room, vacuums, pos):
 
     index = -1
     for _ in vacuums:
-        
+
         index += 1
         if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1]:
             return True
@@ -24,7 +24,7 @@ def isVacuumInPos( room, vacuums, pos):
 def isVacuumNeghbr(room,vacuums,pos):
     index = -1
     for _ in vacuums:
-        
+
         index += 1
         if room.vacuum_position(index)[0] == pos[0] - 1 and room.vacuum_position(index)[1] == pos[1]:
             return True
@@ -34,7 +34,7 @@ def isVacuumNeghbr(room,vacuums,pos):
             return True
         if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1] - 1:
             return True
-    
+
     return False
 
 
@@ -137,6 +137,8 @@ def main():
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Text('Average number of steps per dirt: '+ str(round(globals.globals.nb_steps/globals.globals.nb_clean_tiles)))],
+                    [sg.Text('Average time to clean a dirt: ' + str(round(round(globals.globals.end_duration-globals.globals.start_duration,3)/globals.globals.nb_clean_tiles, 2)))],
                     [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
@@ -185,7 +187,7 @@ def main():
                     x.move_to_closest_dirt()
                 if(globals.globals.dirt_agents != 0):
                     for x in dirt_machines:
-                        print("moving: ", x)
+                        # print("moving: ", x)
                         x.move_from_closest_dirt()
                 else:
                     pass
@@ -208,6 +210,8 @@ def main():
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Text('Average number of steps per dirt: '+ str(round(globals.globals.nb_steps/globals.globals.nb_clean_tiles)))],
+                    [sg.Text('Average time to clean a dirt: ' + str(round(round(globals.globals.end_duration-globals.globals.start_duration,3)/globals.globals.nb_clean_tiles, 2)))],
                     [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
@@ -291,6 +295,8 @@ def main():
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Text('Average number of steps per dirt: '+ str(round(globals.globals.nb_steps/globals.globals.nb_clean_tiles)))],
+                    [sg.Text('Average time to clean a dirt: ' + str(round(round(globals.globals.end_duration-globals.globals.start_duration,3)/globals.globals.nb_clean_tiles, 2)))],
                     [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
@@ -318,10 +324,10 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            
+
             index = -1
             for v in vacuums:
-                
+
                 index += 1
                 if(len(path) < index + 1):
                     path.append([])
@@ -356,7 +362,7 @@ def main():
 
             index = -1
             for _ in dirt_machines:
-                
+
                 index += 1
                 if(len(pathDirt) < index + 1):
                     pathDirt.append([])
@@ -399,15 +405,15 @@ def main():
                 if(len(p) < m):
                     m = len(p)
 
-            
-            
+
+
             for idx in range(0,m):
-                
+
                 index = -1
                 for pathX in path:
 
                     index += 1
-                    
+
                     #print(index)
                     #print(idx)
 
@@ -418,7 +424,7 @@ def main():
                         #print("Vacuum Was Gonna Hit")
                         #exit(0)
                         cyclesStuckCount[index] += 1
-                        
+
                         deltX = 0
                         deltaY = 0
                         if(p == "L"):
@@ -431,7 +437,7 @@ def main():
                             deltaY = 1
 
                         cycleStuckPos[index] = [r.vacuum_position(index)[0] + deltaY, r.vacuum_position(index)[1] + deltX, ]
-                        
+
                         continue;
 
 
@@ -446,7 +452,12 @@ def main():
 
                     mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
 
-                    
+                    # if(globals.globals.dirt_agents != 0):
+                    #     for x in dirt_machines:
+                    #         x.move_from_closest_dirt()
+                    # else:
+                    #     pass
+
                     #if(not game__over and globals.globals.dirt_agents > 0):
                     #    dirt_machines[0].move_from_closest_dirt()
 
@@ -455,7 +466,7 @@ def main():
                 for pathX in pathDirt:
 
                     index += 1
-                    
+
                     if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
                         continue
 
@@ -466,7 +477,7 @@ def main():
                         #print("Vacuum Was Gonna Hit")
                         #exit(0)
                         cyclesStuckCountDirt[index] += 1
-                        
+
                         deltX = 0
                         deltaY = 0
                         if(p == "L"):
@@ -479,7 +490,7 @@ def main():
                             deltaY = 1
 
                         cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
-                        
+
                         continue;
 
 
@@ -492,7 +503,7 @@ def main():
                     elif(p == "D"):
                         dirt_machines[index].move_down()
 
-                   
+
 
                 pygame.time.delay(globals.globals.speed)
 
@@ -539,6 +550,8 @@ def main():
                     [sg.Text('Number of cleaned tiles: '+ str(globals.globals.nb_clean_tiles))],
                     [sg.Text('Number of steps: '+ str(globals.globals.nb_steps))],
                     [sg.Text('Number of added dirt: '+ str(globals.globals.nb_added_dirt))],
+                    [sg.Text('Average number of steps per dirt: '+ str(round(globals.globals.nb_steps/globals.globals.nb_clean_tiles)))],
+                    [sg.Text('Average time to clean a dirt: ' + str(round(round(globals.globals.end_duration-globals.globals.start_duration,3)/globals.globals.nb_clean_tiles, 2)))],
                     [sg.Button('Exit')]]
                     window1 = sg.Window('Measures', layout2)
                     window1.Read()
@@ -571,7 +584,7 @@ def main():
 
             index = -1
             for v in vacuums:
-                
+
                 index += 1
                 if(len(path) < index + 1):
                     path.append([])
@@ -586,10 +599,10 @@ def main():
                 #    exit(0)
 
                 if (pos is None or not pos[0] == -1):
-                    
+
                     if(not pos is None):
                         tempLastLoc[index] = copy.deepcopy( pos )
-                    
+
 
                     pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position(index)) )
                     #print('target pos: ' + str(pos) )
@@ -609,7 +622,7 @@ def main():
                     if(pos2 is None):
                         pos2 = tempLastLoc[index]
 
-                    
+
 
                     pos2 = mySolver.dirtPathIterator( copy.deepcopy( r.vacuum_position(index) ) )
 
@@ -645,7 +658,7 @@ def main():
 
             index = -1
             for _ in dirt_machines:
-                
+
                 index += 1
                 if(len(pathDirt) < index + 1):
                     pathDirt.append([])
@@ -689,7 +702,7 @@ def main():
             for p in path:
                 if(len(p) < m):
                     m = len(p)
-            
+
             for p in pathDirt:
                 if(len(p) < m):
                     m = len(p)
@@ -701,12 +714,12 @@ def main():
             #print(m)
 
             for idx in range(0,m):
-                
+
                 index = -1
                 for pathX in path:
 
                     index += 1
-                    
+
                     #print(index)
                     #print(idx)
 
@@ -724,7 +737,7 @@ def main():
                         #exit(0)
 
                         cyclesStuckCount[index] += 1
-                        
+
                         deltX = 0
                         deltaY = 0
                         if(p == "L"):
@@ -760,16 +773,16 @@ def main():
 
                     #if(not game__over):
                     #    machine.move_from_closest_dirt()
-                
+
 
                 index = -1
                 for pathX in pathDirt:
 
                     index += 1
-                    
+
                     if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
                         continue
-                    
+
                     if(idx >= len(pathX)):
                         continue
 
@@ -780,7 +793,7 @@ def main():
                         #print("Vacuum Was Gonna Hit")
                         #exit(0)
                         cyclesStuckCountDirt[index] += 1
-                        
+
                         deltX = 0
                         deltaY = 0
                         if(p == "L"):
@@ -793,7 +806,7 @@ def main():
                             deltaY = 1
 
                         cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
-                        
+
                         continue;
 
 
@@ -807,13 +820,13 @@ def main():
                         dirt_machines[index].move_down()
 
                     print("moved machine " + str(index) )
-                   
+
 
                 pygame.time.delay(globals.globals.speed)
 
             path[index] = []
             pathDirt[index] = []
-            
+
             #print("idx loop")
 
             pygame.display.update()
