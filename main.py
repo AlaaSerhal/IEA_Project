@@ -11,6 +11,33 @@ from solver import solver
 import copy
 
 
+def isVacuumInPos( room, vacuums, pos):
+
+    index = -1
+    for _ in vacuums:
+        
+        index += 1
+        if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1]:
+            return True
+    return False
+
+def isVacuumNeghbr(room,vacuums,pos):
+    index = -1
+    for _ in vacuums:
+        
+        index += 1
+        if room.vacuum_position(index)[0] == pos[0] - 1 and room.vacuum_position(index)[1] == pos[1]:
+            return True
+        if room.vacuum_position(index)[0] == pos[0] + 1 and room.vacuum_position(index)[1] == pos[1]:
+            return True
+        if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1] + 1:
+            return True
+        if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1] - 1:
+            return True
+    
+    return False
+
+
 def main():
     game_over = False
     game__over=False
@@ -229,6 +256,7 @@ def main():
     elif(case3):
 
         path = []
+        pathDirt = []
 
         count = 0
 
@@ -236,6 +264,9 @@ def main():
 
         cyclesStuckCount = [1]
         cycleStuckPos = [ [0,0] ]
+
+        cyclesStuckCountDirt = [1]
+        cycleStuckPosDirt = [ [0,0] ]
 
         while run:
 
@@ -323,11 +354,50 @@ def main():
                     mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
                     path[index] = mySolver.getLastActualUsedPath();
 
+            index = -1
+            for _ in dirt_machines:
+                
+                index += 1
+                if(len(pathDirt) < index + 1):
+                    pathDirt.append([])
+                if(len(cyclesStuckCountDirt) < index + 1):
+                    cyclesStuckCountDirt.append(1)
+                    cycleStuckPosDirt.append( [0,0] )
+
+                if(pos2 is None):
+                    pos2 = r.dirt_machine_position(index)
+
+                pos2 = copy.deepcopy ( r.dirt_machine_position(index) )
+                #pos2 = r.vacuum_position()
+
+                pos2 = mySolver.addDirtPathIterator( copy.deepcopy( pos2 ) )
+
+                #print("pos 2")
+                #print(pos2)
+
+                if(not game__over):
+                    pathDirt[index] = mySolver.getLastActualUsedPath()
+                    #machine.move_from_closest_dirt()
+
+
+                # Take care of dynmaic collision
+
+                #if stuck by other agent abort mission
+                if(cyclesStuckCountDirt[index] > 1):
+                    #print(cycleStuckPos[index])
+                    cyclesStuckCountDirt[index] = 1
+                    mySolver.escapeFromAgent(r.dirt_machine_position(index), cycleStuckPosDirt[index] )
+                    pathDirt[index] = mySolver.getLastActualUsedPath();
+
+
             m = len(path[0])
             for p in path:
                 if(len(p) < m):
                     m = len(p)
 
+            for p in pathDirt:
+                if(len(p) < m):
+                    m = len(p)
             
             for idx in range(0,m):
                 
@@ -377,6 +447,50 @@ def main():
                     
                     #if(not game__over and globals.globals.dirt_agents > 0):
                     #    dirt_machines[0].move_from_closest_dirt()
+
+
+                index = -1
+                for pathX in pathDirt:
+
+                    index += 1
+                    
+                    if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
+                        continue
+
+                    p = pathX[idx]
+
+                    # Take care of dynmaic collision
+                    if( not p in dirt_machines[index].get_valid_moves() ):
+                        print("Vacuum Was Gonna Hit")
+                        #exit(0)
+                        cyclesStuckCountDirt[index] += 1
+                        
+                        deltX = 0
+                        deltaY = 0
+                        if(p == "L"):
+                            deltX = -1
+                        elif(p == "R"):
+                            deltX = 1
+                        elif(p == "U"):
+                            deltaY = -1
+                        elif(p == "D"):
+                            deltaY = 1
+
+                        cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
+                        
+                        break;
+
+
+                    if(p == "L"):
+                        dirt_machines[index].move_left()
+                    elif(p == "R"):
+                        dirt_machines[index].move_right()
+                    elif(p == "U"):
+                        dirt_machines[index].move_up()
+                    elif(p == "D"):
+                        dirt_machines[index].move_down()
+
+                   
 
                 pygame.time.delay(globals.globals.speed)
 

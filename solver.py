@@ -181,7 +181,28 @@ class solver:
 
             return destPos
 
-     
+    def addDirtPathIterator(self,currPos):
+        
+        #where should i add dirt
+
+        currentGraph = copy.deepcopy (self.getLastGraph() )
+        #currentGraph = self.transformGridToGraph(self.getExploredGrid())
+        
+
+        destPos = self.getRandomTile()
+        
+        pathDir = self.getPathDirections(self.getExploredGrid()
+        ,currentGraph,currPos[0],currPos[1],destPos[0],destPos[1])
+        
+
+        newCurrPos = self.exploreByPath(self.trueGrid,currPos[0],currPos[1],pathDir)
+        
+
+        return newCurrPos
+        
+
+
+
     def expoloreAllBorders(self):
 
         self.exploredGridActual = [ [None]*len(self.trueGrid[0]) for _ in range(0,len(self.trueGrid)) ]
