@@ -5,7 +5,7 @@ import globals
 from math import hypot
 
 class dirt_machine:
-    def __init__(self, room, window):
+    def __init__(self, room, window, id=0):
         self.img = pygame.image.load("dirt_machine.png")
         self.dirt_img = pygame.image.load("dirt.png")
         self.room = room
@@ -16,14 +16,16 @@ class dirt_machine:
         self.prev_prev_prev_prev_move = None
         self.loop = False
         self.count = 0
+        self.id = id
 
 
     def set_position(self, row, col):  # sets position of vaccum and moves the image and deletes the old image
-        old = self.room.dirt_machine_position()
+        # print("setting dirt machinewith ID: ", self.id)
+        old = self.room.dirt_machine_position(self.id)
         old_col = old[1]
         old_row = old[0]
         cell_size = self.room.get_cell_size()
-        self.room.set_dirt_machine(row, col)
+        self.room.set_dirt_machine(self.id, row, col)
         old_left = int((old_col*cell_size)+2)
         old_top = int((old_row*cell_size)+2)
         left = int((col*cell_size)+2)
@@ -38,7 +40,7 @@ class dirt_machine:
 
     def move_up(self):
         grid = self.room.get_array()
-        position = self.room.dirt_machine_position()
+        position = self.room.dirt_machine_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_up_border() and row > 0):
@@ -53,7 +55,7 @@ class dirt_machine:
 
     def move_down(self):
         grid = self.room.get_array()
-        position = self.room.dirt_machine_position()
+        position = self.room.dirt_machine_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_down_border() and row < self.room.get_rows()-1):
@@ -68,7 +70,7 @@ class dirt_machine:
 
     def move_right(self):
         grid = self.room.get_array()
-        position = self.room.dirt_machine_position()
+        position = self.room.dirt_machine_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_right_border() and col < self.room.get_cols()-1):
@@ -83,7 +85,7 @@ class dirt_machine:
 
     def move_left(self):
         grid = self.room.get_array()
-        position = self.room.dirt_machine_position()
+        position = self.room.dirt_machine_position(self.id)
         row = position[0]
         col = position[1]
         if(not grid[row][col].has_left_border() and col > 0):
@@ -97,7 +99,7 @@ class dirt_machine:
             raise Exception("Invalid move! Cannot move up from current position.")
 
     def leave_dirt(self):
-        position = self.room.dirt_machine_position()
+        position = self.room.dirt_machine_position(self.id)
         row = position[0]
         col = position[1]
         self.room.set_dirt(row, col)
@@ -157,9 +159,9 @@ class dirt_machine:
 
     def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
-        pos = self.room.dirt_machine_position()
+        pos = self.room.dirt_machine_position(self.id)
         grid = self.room.get_array()
-        tile = self.room.get_dirt_machine_tile()
+        tile = self.room.get_dirt_machine_tile(self.id)
         if(not tile.has_up_border()):
             if(not grid[pos[0]-1][pos[1]].is_occupied()):
                 moves.append("U")
@@ -193,14 +195,14 @@ class dirt_machine:
             pass
 
     def move_from_closest_dirt(self):  # take one step closer to closest dirt
-        
+
         next_pos = None
-        
+
         distances = []
         valid_moves = self.get_valid_moves()
         min_distance = 10000
         closest_dirt = None
-        current_position = self.room.dirt_machine_position()
+        current_position = self.room.dirt_machine_position(self.id)
         dirt_list = self.room.get_dirt_list()
         if(len(dirt_list) != 0):  # check if there is any dirt left on the map
             for dirt in dirt_list:  # calculate distance between vacuum and every dirt
@@ -262,7 +264,7 @@ class dirt_machine:
             # if vacuum might get stuck, remove best move and go with safe sub optimal move
             if(case_a or case_b or case_c or case_d and len(valid_moves) > 1 and best_move in valid_moves):
                 valid_moves.remove(best_move)
-                print("trying to escape")
+                # print("trying to escape")
 
             max_new_dist = -1
             second_max = -1
@@ -308,7 +310,7 @@ class dirt_machine:
 
             # check if vacuum is going in a loop
             if(x == self.prev_prev_prev_prev_move and self.prev_move == -self.prev_prev_prev_move and self.prev_prev_move == -self.prev_prev_prev_prev_move and not self.loop):
-                print("making second best move")
+                # print("making second best move")
                 best_move = second_best  # if in a loop we go with the second best move to exit loop
 
             # move one step if the right direction
@@ -333,7 +335,7 @@ class dirt_machine:
 
     def move_away_from_dirt(self):
         valid_moves = self.get_valid_moves()
-        current_position = self.room.dirt_machine_position()
+        current_position = self.room.dirt_machine_position(self.id)
         row = current_position[0]
         col = current_position[1]
         dirt_list = self.room.get_dirt_list()
