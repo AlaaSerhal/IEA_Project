@@ -160,6 +160,10 @@ class dirt_machine:
     def get_valid_moves(self):  # gets valid moves from vacuum position
         moves = []
         pos = self.room.dirt_machine_position(self.id)
+
+        #print("pos of machine")
+        #print(pos)
+
         grid = self.room.get_array()
         tile = self.room.get_dirt_machine_tile(self.id)
         if(not tile.has_up_border()):
@@ -174,6 +178,9 @@ class dirt_machine:
         if(not tile.has_right_border()):
             if(not grid[pos[0]][pos[1]+1].is_occupied()):
                 moves.append("R")
+        
+       # print(moves)
+
         return moves
 
     def random_move(self):

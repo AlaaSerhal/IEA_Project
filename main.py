@@ -398,6 +398,8 @@ def main():
             for p in pathDirt:
                 if(len(p) < m):
                     m = len(p)
+
+            
             
             for idx in range(0,m):
                 
@@ -413,7 +415,7 @@ def main():
 
                     # Take care of dynmaic collision
                     if( not p in vacuums[index].get_valid_moves() ):
-                        print("Vacuum Was Gonna Hit")
+                        #print("Vacuum Was Gonna Hit")
                         #exit(0)
                         cyclesStuckCount[index] += 1
                         
@@ -461,7 +463,7 @@ def main():
 
                     # Take care of dynmaic collision
                     if( not p in dirt_machines[index].get_valid_moves() ):
-                        print("Vacuum Was Gonna Hit")
+                        #print("Vacuum Was Gonna Hit")
                         #exit(0)
                         cyclesStuckCountDirt[index] += 1
                         
@@ -508,6 +510,11 @@ def main():
         cycleStuckPos = [ [0,0] ]
 
         tempLastLoc = []
+
+        pathDirt = []
+
+        cyclesStuckCountDirt = [1]
+        cycleStuckPosDirt = [ [0,0] ]
 
         while run:
 
@@ -574,6 +581,10 @@ def main():
                 if(len(tempLastLoc) < index + 1):
                     tempLastLoc.append( [] )
 
+                #if(index > 1):
+                #    print("Impossible Indx")
+                #    exit(0)
+
                 if (pos is None or not pos[0] == -1):
                     
                     if(not pos is None):
@@ -612,10 +623,48 @@ def main():
 
                 #if stuck by other agent abort mission
                 if(cyclesStuckCount[index] > 1):
-                    print("getting out")
+                    #print("getting out")
                     cyclesStuckCount[index] = 1
-                    mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
+                    pst = mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
                     path[index] = mySolver.getLastActualUsedPath();
+                    #print("agent")
+                    #print(index)
+                    #print(pst)
+
+            index = -1
+            for _ in dirt_machines:
+                
+                index += 1
+                if(len(pathDirt) < index + 1):
+                    pathDirt.append([])
+                if(len(cyclesStuckCountDirt) < index + 1):
+                    cyclesStuckCountDirt.append(1)
+                    cycleStuckPosDirt.append( [0,0] )
+
+                if(pos2 is None):
+                    pos2 = r.dirt_machine_position(index)
+
+                pos2 = copy.deepcopy ( r.dirt_machine_position(index) )
+                #pos2 = r.vacuum_position()
+
+                pos2 = mySolver.addDirtPathIterator( copy.deepcopy( pos2 ) )
+
+                #print("pos 2")
+                #print(pos2)
+
+                if(not game__over):
+                    pathDirt[index] = mySolver.getLastActualUsedPath()
+                    #machine.move_from_closest_dirt()
+
+
+                # Take care of dynmaic collision
+
+                #if stuck by other agent abort mission
+                if(cyclesStuckCountDirt[index] > 1):
+                    #print(cycleStuckPos[index])
+                    cyclesStuckCountDirt[index] = 1
+                    mySolver.escapeFromAgent(r.dirt_machine_position(index), cycleStuckPosDirt[index] )
+                    pathDirt[index] = mySolver.getLastActualUsedPath();
 
 
             #END OF EXPLORATION
@@ -624,10 +673,17 @@ def main():
             for p in path:
                 if(len(p) < m):
                     m = len(p)
-                    
-                    #print( "M value "  + str(m) ) 
-
             
+            for p in pathDirt:
+                if(len(p) < m):
+                    m = len(p)
+
+            if(m < 2):
+                m = 3
+
+            #print("M value")
+            #print(m)
+
             for idx in range(0,m):
                 
                 index = -1
@@ -638,13 +694,17 @@ def main():
                     #print(index)
                     #print(idx)
 
+                    if(idx >= len(pathX)):
+                        continue
+
+
                     p = pathX[idx]
 
                     #mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
                     #print("in pathX loop")
 
                     if( not p in vacuums[index].get_valid_moves() ):
-                        print("Vacuum Was Gonna Hit")
+                        #print("Vacuum Was Gonna Hit")
                         #exit(0)
 
                         cyclesStuckCount[index] += 1
@@ -683,7 +743,54 @@ def main():
                     #if(not game__over):
                     #    machine.move_from_closest_dirt()
                 
-                #path[index] = []
+
+                index = -1
+                for pathX in pathDirt:
+
+                    index += 1
+                    
+                    if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
+                        continue
+                    
+                    if(idx >= len(pathX)):
+                        continue
+
+                    p = pathX[idx]
+
+                    # Take care of dynmaic collision
+                    if( not p in dirt_machines[index].get_valid_moves() ):
+                        #print("Vacuum Was Gonna Hit")
+                        #exit(0)
+                        cyclesStuckCountDirt[index] += 1
+                        
+                        deltX = 0
+                        deltaY = 0
+                        if(p == "L"):
+                            deltX = -1
+                        elif(p == "R"):
+                            deltX = 1
+                        elif(p == "U"):
+                            deltaY = -1
+                        elif(p == "D"):
+                            deltaY = 1
+
+                        cycleStuckPosDirt[index] = [r.dirt_machine_position(index)[0] + deltaY, r.dirt_machine_position(index)[1] + deltX, ]
+                        
+                        break;
+
+
+                    if(p == "L"):
+                        dirt_machines[index].move_left()
+                    elif(p == "R"):
+                        dirt_machines[index].move_right()
+                    elif(p == "U"):
+                        dirt_machines[index].move_up()
+                    elif(p == "D"):
+                        dirt_machines[index].move_down()
+
+                   
+                path[index] = []
+                pathDirt[index] = []
 
                 pygame.time.delay(globals.globals.speed)
             

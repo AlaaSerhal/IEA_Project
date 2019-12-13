@@ -260,6 +260,9 @@ class solver:
         pathDir = []
 
         fakeGrid = copy.deepcopy(self.trueGrid)
+        
+        print(machinePos)
+
         fakeGrid[machinePos[0]][machinePos[1]].set_borders(True,True,True,True)
 
         counter = 1
