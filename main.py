@@ -318,6 +318,8 @@ def main():
 
                 #if stuck by other agent abort mission
                 if(cyclesStuckCount[index] > 1):
+                    #print(cycleStuckPos[index])
+                    cyclesStuckCount[index] = 1
                     mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
                     path[index] = mySolver.getLastActualUsedPath();
 
@@ -388,6 +390,11 @@ def main():
 
         count = 0
 
+        cyclesStuckCount = [1]
+        cycleStuckPos = [ [0,0] ]
+
+        tempLastLoc = []
+
         while run:
 
             if(count >= globals.globals.frequency):
@@ -440,107 +447,133 @@ def main():
                     run = False
 
             #EXPLORE MAP CODE
-            #CASE 4
 
-            if (pos is None or not pos[0] == -1):
+            index = -1
+            for v in vacuums:
+                
+                index += 1
+                if(len(path) < index + 1):
+                    path.append([])
+                if(len(cyclesStuckCount) < index + 1):
+                    cyclesStuckCount.append(1)
+                    cycleStuckPos.append( [0,0] )
+                if(len(tempLastLoc) < index + 1):
+                    tempLastLoc.append( [] )
 
-                if(not pos is None):
-                    tempLastLoc = copy.deepcopy( pos )
+                if (pos is None or not pos[0] == -1):
+                    
+                    if(not pos is None):
+                        tempLastLoc[index] = copy.deepcopy( pos )
+                    
 
-
-                pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
-                print('target pos: ' + str(pos) )
-
-
-                if(not game__over):
-                    path = mySolver.getLastActualUsedPath()
-
-                print('path: ' + str(path) )
-
-                print(r.vacuum_position() )
-
-
-
-            #if(pos is None):
-            #    pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position()) )
-            #    print('target pos: ' + str(pos) )
-
-            #if (not pos[0] == -1):
-            #
-            #    if(not game__over):
-            #        path = mySolver.getLastActualUsedPath()
-
-            #    print('path: ' + str(path) )
-
-            #    print(r.vacuum_position() )
+                    pos = mySolver.discoverMapIter( copy.deepcopy(r.vacuum_position(index)) )
+                    #print('target pos: ' + str(pos) )
 
 
+                    if(not game__over):
+                        path[index] = mySolver.getLastActualUsedPath()
 
-            #    tempLastLoc = copy.deepcopy( pos )
-
-            #    pos = mySolver.discoverMapIter( copy.deepcopy( pos ) )
-
-            #    print('target pos: ' + str(pos) )
-
-                #pygame.display.update()
-
-            else:
-
-                if(pos2 is None):
-                    pos2 = tempLastLoc
+                    #print('path: ' + str(path) )
+                    #print(r.vacuum_position() )
 
 
+                else:
 
-                pos2 = mySolver.dirtPathIterator( copy.deepcopy( r.vacuum_position() ) )
+                    #print("Dirt Phase")
 
-#                pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
+                    if(pos2 is None):
+                        pos2 = tempLastLoc[index]
+
+                    
+
+                    pos2 = mySolver.dirtPathIterator( copy.deepcopy( r.vacuum_position(index) ) )
+
+                    #pos2 = mySolver.dirtPathIterator( copy.deepcopy( pos2 ) )
 
 
-                print("pos 2")
-                print(pos2)
-                if(not game__over):
-                    path = mySolver.getLastActualUsedPath()
+                    #print("pos 2")
+                    #print(pos2)
+                    if(not game__over):
+                        path[index] = mySolver.getLastActualUsedPath()
 
-                #path = []
+                #if stuck by other agent abort mission
+                if(cyclesStuckCount[index] > 1):
+                    print("getting out")
+                    cyclesStuckCount[index] = 1
+                    mySolver.escapeFromAgent(r.vacuum_position(index), cycleStuckPos[index] )
+                    path[index] = mySolver.getLastActualUsedPath();
+
 
             #END OF EXPLORATION
 
+            m = len(path[0])
             for p in path:
+                if(len(p) < m):
+                    m = len(p)
+                    
+                    #print( "M value "  + str(m) ) 
 
-                if( not p in v.get_valid_moves() ):
-                    print("Vacuum Was Gonna Hit")
-                    #exit(0)
-                    break;
+            
+            for idx in range(0,m):
+                
+                index = -1
+                for pathX in path:
 
-                if(p == "L"):
-                    v.move_left()
-                elif(p == "R"):
-                    v.move_right()
-                elif(p == "U"):
-                    v.move_up()
-                elif(p == "D"):
-                    v.move_down()
+                    index += 1
+                    
+                    #print(index)
+                    #print(idx)
+
+                    p = pathX[idx]
+
+                    #mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
+                    #print("in pathX loop")
+
+                    if( not p in vacuums[index].get_valid_moves() ):
+                        print("Vacuum Was Gonna Hit")
+                        #exit(0)
+
+                        cyclesStuckCount[index] += 1
+                        
+                        deltX = 0
+                        deltaY = 0
+                        if(p == "L"):
+                            deltX = -1
+                        elif(p == "R"):
+                            deltX = 1
+                        elif(p == "U"):
+                            deltaY = -1
+                        elif(p == "D"):
+                            deltaY = 1
+
+                        cycleStuckPos[index] = [r.vacuum_position(index)[0] + deltaY, r.vacuum_position(index)[1] + deltX ]
+
+                        #print(cycleStuckPos[index])
+
+                        #print(cyclesStuckCount[index])
+
+                        break;
+
+                    if(p == "L"):
+                        vacuums[index].move_left()
+                    elif(p == "R"):
+                        vacuums[index].move_right()
+                    elif(p == "U"):
+                        vacuums[index].move_up()
+                    elif(p == "D"):
+                        vacuums[index].move_down()
 
 
-                mySolver.addExploredToGrid(r.get_array(), r.vacuum_position()[0], r.vacuum_position()[1] )
+                    mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
 
-                if(not game__over):
-                    machine.move_from_closest_dirt()
+                    #if(not game__over):
+                    #    machine.move_from_closest_dirt()
+                
+                #path[index] = []
 
                 pygame.time.delay(globals.globals.speed)
-
-
-            path.clear();
-
-            #ADDED -- shouldn't be a problem
-            #if(not pos[0] == -1):
-            #    pos = r.vacuum_position();
-            #else:
-                #ADDED -- shouldn't be a problem
-            #    pos2 = r.vacuum_position();
-
-
-
+            
+            #print("idx loop")
 
             pygame.display.update()
 

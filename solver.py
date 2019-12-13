@@ -293,9 +293,15 @@ class solver:
         return [row,col]    
     
     def getExploredGrid(self):
+        
+        #print("getExplored()")
+
         return self.exploredGridActual
 
     def addExploredToGrid(self,grid,row,col):
+
+        #print("explored " + str(row) + " - " + str(col) )
+
         self.exploredGrid[row][col] = True
         self.exploredGridActual[row][col] = copy.deepcopy( grid[row][col] )
         
