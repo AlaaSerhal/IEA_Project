@@ -21,8 +21,12 @@ def isVacuumInPos( room, vacuums, pos):
             return True
     return False
 
-def isVacuumNeghbr(room,vacuums,pos):
+def isVacuumNeghbr(room,vacuums,pos, boxIn):
     index = -1
+
+    if(not boxIn):
+        return False
+
     for _ in vacuums:
 
         index += 1
@@ -63,7 +67,8 @@ def main():
             [sg.Radio('Case3 (Fully observable borders and unknown dirt positions):', "Case1", default=False)],
             [sg.Radio('Case4 (Unknown borders and dirt positions):', "Case1", default=False)],
 
-            [sg.Checkbox('Use Mario',  default=False)]],
+            [sg.Checkbox('Alternate Dirt Algorithm',  default=False)],
+            [sg.Checkbox('Box In',  default=False)]],
 
             title='Choose Any of these Cases',title_color='red', relief=sg.RELIEF_SUNKEN, tooltip='Use these to set flags')],
             [sg.Submit()]]
@@ -75,6 +80,8 @@ def main():
             case4=values[12]
             
             intelligenceDirtFirst=values[13]
+
+            boxIn = values[14]
             
             rows=int(values[0])
             cols=int(values[1])
@@ -190,14 +197,71 @@ def main():
                     run = False
 
             if(not game_over):
-                for x in vacuums:
-                    x.move_to_closest_dirt()
+                
+                if(not intelligenceDirtFirst):
+                    for x in vacuums:
+                        x.move_to_closest_dirt()
+                
+                
+                
                 if(globals.globals.dirt_agents != 0):
-                    for x in dirt_machines:
-                        # print("moving: ", x)
-                        x.move_from_closest_dirt()
-                else:
-                    pass
+                    if(intelligenceDirtFirst):
+                       #Alternate Algrthm 
+                        paths = mySolver.getFirstPathForDirt(r,dirt_machines,vacuums, boxIn)
+                       
+                        index = -1
+                        if(not paths is None):
+                            
+                            m = len(paths[0])
+                            for p in paths:
+                                if(len(p) < m):
+                                    m = len(p)
+                            
+                            for idx in range(0,m):
+                                for pathX in paths:
+                                    index += 1
+
+                                    if( pathX is None or pathX == [] or len(pathX) == 0 or pathX[0] == None):
+                                        continue
+
+                                    if(idx >= len(pathX)):
+                                        continue    
+
+                                    try:
+                                        
+                                        didMove = False
+
+                                        if(pathX[idx] == 'L'):
+                                            dirt_machines[index].move_left()
+                                            didMove = True
+                                        if(pathX[idx] == 'U'):
+                                            dirt_machines[index].move_up()
+                                            didMove = True
+                                        if(pathX[idx] == 'D'):
+                                            dirt_machines[index].move_down()
+                                            didMove = True
+                                        if(pathX[idx] == 'R'):
+                                            dirt_machines[index].move_right()
+                                            didMove = True
+
+                                       # if(idx >= 1):
+                                        for x in vacuums:
+                                            x.move_to_closest_dirt()
+                            
+                                        if( intelligenceDirtFirst):
+                                            pygame.time.delay(globals.globals.speed)
+
+                                    except Exception:
+                                        pass
+                                    
+                                    
+
+                                
+                                
+                    else:
+                        for x in dirt_machines:
+                            x.move_from_closest_dirt()
+
 
     elif(case2):  # fully observable and dirt keeps getting added
         count = 0
@@ -205,7 +269,9 @@ def main():
             if(count == globals.globals.frequency):
                 d.probabilistic_dirt(1)
                 count = 0
-            pygame.time.delay(globals.globals.speed)
+            
+            if(not intelligenceDirtFirst):
+                pygame.time.delay(globals.globals.speed)
             clock.tick(10)
 
             for event in pygame.event.get():
@@ -254,13 +320,71 @@ def main():
                 if event.type == pygame.QUIT:
                     run = False
             if(not game_over):
-                for x in vacuums:
-                    x.move_to_closest_dirt()
+                
+                if(not intelligenceDirtFirst):
+                    for x in vacuums:
+                        x.move_to_closest_dirt()
+                
+                
+                
                 if(globals.globals.dirt_agents != 0):
-                    for x in dirt_machines:
-                        x.move_from_closest_dirt()
-                else:
-                    pass
+                    if(intelligenceDirtFirst):
+                       #Alternate Algrthm 
+                        paths = mySolver.getFirstPathForDirt(r,dirt_machines,vacuums, boxIn)
+                       
+                        index = -1
+                        if(not paths is None):
+                            
+                            m = len(paths[0])
+                            for p in paths:
+                                if(len(p) < m):
+                                    m = len(p)
+                            
+                            for idx in range(0,m):
+                                for pathX in paths:
+                                    index += 1
+
+                                    if( pathX is None or pathX == [] or len(pathX) == 0 or pathX[0] == None):
+                                        continue
+
+                                    if(idx >= len(pathX)):
+                                        continue    
+
+                                    try:
+                                        
+                                        didMove = False
+
+                                        if(pathX[idx] == 'L'):
+                                            dirt_machines[index].move_left()
+                                            didMove = True
+                                        if(pathX[idx] == 'U'):
+                                            dirt_machines[index].move_up()
+                                            didMove = True
+                                        if(pathX[idx] == 'D'):
+                                            dirt_machines[index].move_down()
+                                            didMove = True
+                                        if(pathX[idx] == 'R'):
+                                            dirt_machines[index].move_right()
+                                            didMove = True
+
+                                       # if(idx >= 1):
+                                        for x in vacuums:
+                                            x.move_to_closest_dirt()
+                            
+                                        if( intelligenceDirtFirst):
+                                            pygame.time.delay(globals.globals.speed)
+
+                                    except Exception:
+                                        pass
+                                    
+                                    
+
+                                
+                                
+                    else:
+                        for x in dirt_machines:
+                            x.move_from_closest_dirt()
+
             count += 1
 
     #Partially visible in HERE
@@ -480,7 +604,7 @@ def main():
 
                         index += 1
 
-                        if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
+                        if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index), boxIn )):
                             continue
 
                         p = pathX[idx]
@@ -757,7 +881,7 @@ def main():
                     #print("in pathX loop")
 
                     if( not p in vacuums[index].get_valid_moves() ):
-                        print(p + " Vacuum Was Gonna Hit")
+                       # print(p + " Vacuum Was Gonna Hit")
                         #exit(0)
 
                         cyclesStuckCount[index] += 1
@@ -790,7 +914,7 @@ def main():
                     elif(p == "D"):
                         vacuums[index].move_down()
 
-                    print("moved vacuum " + str(index) )
+                    #print("moved vacuum " + str(index) )
 
 
                     mySolver.addExploredToGrid(r.get_array(), r.vacuum_position(index)[0], r.vacuum_position(index)[1] )
@@ -804,7 +928,7 @@ def main():
 
                         index += 1
 
-                        if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) )):
+                        if(isVacuumNeghbr(r,vacuums, r.dirt_machine_position(index) , boxIn)):
                             continue
 
                         if(idx >= len(pathX)):
@@ -846,7 +970,7 @@ def main():
                         dirt_machines[index].incrementCountForDirt(8)
 
 
-                        print("moved machine " + str(index) )
+                        #print("moved machine " + str(index) )
 
                 if(dirtMachineIntelligence == 1):
                     for mac in dirt_machines:

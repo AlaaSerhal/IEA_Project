@@ -96,6 +96,6 @@ class dirt:
             # cell is already occupied by dirt or vacuum
             if(self.room.get_array()[row][col].has_dirt() or self.room.get_array()[row][col].has_vacuum()):
                 count += 1
-            else:  # set dirt
+            elif(not self.room.get_array()[row][col].is_occupied()):  # set dirt
                 self.room.set_dirt(row, col)
                 i += 1

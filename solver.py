@@ -38,6 +38,13 @@ class solver:
 
         self.scoreMapDirtAgent()
 
+        ###
+        self.pathDirt = []
+        self.cyclesStuckCountDirt= [1]
+        self.cycleStuckPosDirt = [ [0,0] ]
+
+        ###
+
         for row in range(0,len(grid)):
             for col in range(0,len(grid[0])):
 
@@ -209,7 +216,15 @@ class solver:
         
         #where should i add dirt
 
-        currentGraph = copy.deepcopy (self.getLastGraph() )
+
+
+        try:
+            currentGraph = copy.deepcopy (self.getLastGraph() )
+        except Exception:
+            currentGraph = self.transformGridToGraph(self.getExploredGrid())
+        else:
+            currentGraph = self.transformGridToGraph(self.getExploredGrid())
+        
         #currentGraph = self.transformGridToGraph(self.getExploredGrid())
         
 
@@ -424,7 +439,7 @@ class solver:
             if(path[idx] == 'U'):
                 if( grid[currentPos[0]][currentPos[1]].has_up_border() ):
                     #the end
-                    print("path hit U")
+                    #print("path hit U")
                     return currentPos
                 else:
                     currentPos = [currentPos[0] -1, currentPos[1]]
@@ -439,7 +454,7 @@ class solver:
             elif(path[idx] == 'R'):
                 if( grid[currentPos[0]][currentPos[1]].has_right_border() ):
                     #the end
-                    print("path hit R")
+                    #print("path hit R")
                     return currentPos
                 else:
                     currentPos = [currentPos[0], currentPos[1] + 1]
@@ -455,7 +470,7 @@ class solver:
             elif(path[idx] == 'L'):
                 if( grid[currentPos[0]][currentPos[1]].has_left_border() ):
                     #the end
-                    print("path hit L")
+                    #print("path hit L")
                     return currentPos
                 else:
                     currentPos = [currentPos[0], currentPos[1] - 1]
@@ -472,7 +487,7 @@ class solver:
             elif(path[idx] == 'D'):
                 if( grid[currentPos[0]][currentPos[1]].has_down_border() ):
                     #the end
-                    print("path hit D")
+                    #print("path hit D")
                     return currentPos
                 else:
                     currentPos = [currentPos[0] +1, currentPos[1]]
@@ -536,7 +551,117 @@ class solver:
 
         return g
     
-      
+    def isVacuumNeghbr(self,room,vacuums,pos,boxIn):
+        index = -1
+
+        if(not boxIn):
+            return False
+
+        for _ in vacuums:
+
+            index += 1
+            if room.vacuum_position(index)[0] == pos[0] - 1 and room.vacuum_position(index)[1] == pos[1]:
+                return True
+            if room.vacuum_position(index)[0] == pos[0] + 1 and room.vacuum_position(index)[1] == pos[1]:
+                return True
+            if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1] + 1:
+                return True
+            if room.vacuum_position(index)[0] == pos[0] and room.vacuum_position(index)[1] == pos[1] - 1:
+                return True
+
+        return False
+
+    def getFirstPathForDirt(self, r, dirt_machines, vacuums,boxIn):
+
+        self.pathDirt = []
+
+        #index = -1
+
+#        dirt_machines = copy.deepcopy( dirt_machinesX )
+
+        for index in range(0,len(dirt_machines)):
+
+            #index += 1
+            #print("length")
+            #print(len(dirt_machines))
+            #print("index")
+            #print(index)
+
+            if(len(self.pathDirt) < index + 1):
+                self.pathDirt.append([])
+            if(len(self.cyclesStuckCountDirt) < index + 1):
+                self.cyclesStuckCountDirt.append(1)
+                self.cycleStuckPosDirt.append( [0,0] )
+
+            pos2 = copy.deepcopy ( r.dirt_machine_position(index) )
+
+            pos2 = self.addDirtPathIterator( copy.deepcopy( pos2 ) )
+
+            
+            self.pathDirt[index] = self.getLastActualUsedPath()
+
+
+            # Take care of dynmaic collision
+
+            #if stuck by other agent abort mission
+            if(self.cyclesStuckCountDirt[index] > 1):
+                #print(cycleStuckPos[index])
+                self.cyclesStuckCountDirt[index] = 1
+                self.escapeFromAgent(r.dirt_machine_position(index), self.cycleStuckPosDirt[index] )
+                self.pathDirt[index] = self.getLastActualUsedPath();
+
+        indexM = -1
+        for pathX in self.pathDirt:
+
+            indexM += 1
+
+            idx = 0
+
+            if(idx >= len(pathX)):
+            #    pathX[index].append ( [] )
+                continue
+            #else:
+            #    pathX[index] = []
+
+            if(self.isVacuumNeghbr(r,vacuums, r.dirt_machine_position(indexM) , boxIn)):
+            #    pathX[index] = []
+                continue
+
+            
+
+            p = pathX[idx]
+
+            # Take care of dynmaic collision
+            if( not p in dirt_machines[indexM].get_valid_moves() ):
+                #print("Vacuum Was Gonna Hit")
+                #exit(0)
+                self.cyclesStuckCountDirt[indexM] += 1
+
+                deltX = 0
+                deltaY = 0
+                if(p == "L"):
+                    deltX = -1
+                elif(p == "R"):
+                    deltX = 1
+                elif(p == "U"):
+                    deltaY = -1
+                elif(p == "D"):
+                    deltaY = 1
+
+                self.cycleStuckPosDirt[indexM] = [r.dirt_machine_position(indexM)[0] + deltaY, r.dirt_machine_position(indexM)[1] + deltX, ]
+
+                continue;
+
+            dirt_machines[indexM].incrementCountForDirt(8)
+
+            #print(self.pathDirt)
+
+            return self.pathDirt
+
+ 
+
+
+
     @staticmethod
     def getPathDirections(grid,g,y1,x1,y2,x2):
     
